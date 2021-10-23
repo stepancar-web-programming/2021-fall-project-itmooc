@@ -1,13 +1,5 @@
 {
-    "parser": "babel-eslint",
-    "extends": [
-        "airbnb",
-        "prettier/react",
-        "plugin:prettier/recommended",
-        "plugin:import/errors",
-        "plugin:import/warnings",
-        "plugin:react-hooks/recommended"
-    ],
+    "root": true,
     "env": {
         "browser": true,
         "commonjs": true,
@@ -15,50 +7,84 @@
         "jest": true,
         "node": true
     },
-    "settings": {
-        "import/resolver": {
-            "babel-module": {}
+    "extends": [
+        "airbnb",
+        "prettier",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:jsx-a11y/recommended",
+        "plugin:react-hooks/recommended"
+    ],
+    "plugins": ["prettier", "react", "react-hooks"],
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "ecmaVersion": 2021,
+        "requireConfigFile": false,
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "impliedStrict": true
         }
     },
     "rules": {
-        "jsx-a11y/no-noninteractive-element-interactions": "off",
-        "jsx-a11y/alt-text": "off",
-        "radix": "off",
-        "react/style-prop-object": "warn",
-        "consistent-return": "warn",
-        "prefer-promise-reject-errors": "off",
-        "react/forbid-prop-types": "off",
-        "array-callback-return": "off",
-        "no-param-reassign": "off",
-        "no-shadow": "off",
-        "react/no-array-index-key": "off",
-        "react/jsx-props-no-spreading": "off",
-        "import/no-extraneous-dependencies": "off",
-        "camelcase": "off",
-        "react/prop-types": 1,
-        "no-unused-vars": 1,
-        "import/prefer-default-export": "off",
-        "jsx-a11y/href-no-hash": ["off"],
-        "jsx-a11y/no-static-element-interactions": "off",
-        "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/anchor-is-valid": "off",
-        "react/jsx-no-target-blank": ["warn", { "enforceDynamicLinks": "never" }],
-        "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
-        "react/no-unescaped-entities": "off",
-        "react/prefer-stateless-function": "off",
-        "react/destructuring-assignment": "off",
-        "max-len": [
-            "warn",
+        "radix": 0,
+        "import": 0,
+        "max-len": 0,
+        "no-alert": 0,
+        "camelcase": 0,
+        "no-shadow": 0,
+        "no-console": 0,
+        "comma-dangle": 0,
+        "no-return-assign": 0,
+        "consistent-return": 1,
+        "no-param-reassign": 0,
+        "no-use-before-define": 0,
+        "no-underscore-dangle": 0,
+        "array-callback-return": 0,
+        "prefer-promise-reject-errors": 0,
+        "no-unused-vars": [
+            1,
             {
-                "code": 120,
-                "tabWidth": 4,
-                "comments": 120,
-                "ignoreComments": false,
-                "ignoreTrailingComments": true,
-                "ignoreUrls": true,
-                "ignoreStrings": true,
-                "ignoreTemplateLiterals": true,
-                "ignoreRegExpLiterals": true
+                "ignoreRestSiblings": false
+            }
+        ],
+
+        "import/no-cycle": 0,
+        "import/prefer-default-export": 0,
+        "import/no-extraneous-dependencies": 0,
+
+        "react/jsx-key": 1,
+        "react/prop-types": 1,
+        "react/display-name": 0,
+        "react/button-has-type": 1,
+        "react/no-children-prop": 0,
+        "react/forbid-prop-types": 0,
+        "react/style-prop-object": 1,
+        "react/react-in-jsx-scope": 0,
+        "react/no-array-index-key": 0,
+        "react/no-unused-prop-types": 1,
+        "react-hooks/rules-of-hooks": 2,
+        "react/require-default-props": 0,
+        "react/no-unescaped-entities": 0,
+        "react/jsx-props-no-spreading": 0,
+        "react/destructuring-assignment": 0,
+        "react/prefer-stateless-function": 0,
+        "react/jsx-no-target-blank": [1, { "enforceDynamicLinks": "never" }],
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+
+        "jsx-a11y/alt-text": 0,
+        "jsx-a11y/href-no-hash": [0],
+        "jsx-a11y/anchor-is-valid": 0,
+        "jsx-a11y/click-events-have-key-events": 0,
+        "jsx-a11y/no-static-element-interactions": 0,
+        "jsx-a11y/no-noninteractive-element-interactions": 0,
+
+        "prettier/prettier": [
+            2,
+            {
+                "printWidth": 120,
+                "singleQuote": true,
+                "trailingComma": "none",
+                "tabWidth": 4
             }
         ]
     }
