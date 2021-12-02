@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { MotionContainer, varBounceIn } from '../components/animate';
-import Page from '../components/Page';
+import Page from '../modules/core/components/Page';
 
 const RootStyle = styled(Page)(({ theme }) => ({
     display: 'flex',

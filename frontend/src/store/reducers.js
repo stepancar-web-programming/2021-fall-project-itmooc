@@ -1,8 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import joinReducer from '../modules/join/reducers';
+
+import authReducer from '../modules/auth/reducers';
+import menuReducer from '../modules/menu/reducers';
 
 export const store = configureStore({
     reducer: {
-        join: joinReducer
+        join: authReducer,
+        menu: menuReducer
     }
 });

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 
-import Page from '../components/Page';
-import JoinPage from '../modules/join/containers/JoinPage';
+import Page from '../modules/core/components/Page';
+import { SignUp } from '../modules/auth';
 
-export default function Join() {
+export default function SignUpPage() {
     const theme = useTheme();
 
     useEffect(() => {
@@ -13,7 +13,7 @@ export default function Join() {
 
     return (
         <Page title="Для студентов - ITMOOC">
-            <JoinPage />
+            <SignUp />
         </Page>
     );
 }

@@ -1,24 +1,26 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import {
     Link,
     Container,
     Typography,
     Box,
-    FormControl,
     OutlinedInput,
     InputAdornment,
     Button,
     Paper,
-    Alert
+    Alert,
+    Stack,
+    TextField,
+    useMediaQuery
 } from '@mui/material';
 
-import Logo from '../../../components/Logo';
+import Logo from '../../core/components/Logo';
 import { MotionContainer, varBounceIn } from '../../../components/animate';
-import { CustomParticles } from '../components/CustomParticles';
+import { CustomParticles } from '../components';
 import { postCode } from '../reducers/joinReducer';
 
 const MainContainer = styled(Container)(() => ({
@@ -39,22 +41,38 @@ const ImageBox = styled(Box)(({ theme }) => ({
     marginBottom: theme.spacing(4)
 }));
 
-export default function JoinPage() {
+export default function Join() {
     const dispatch = useDispatch();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [code, setCode] = useState('');
 
-    const { loading, response, error } = useSelector((state) => postCode(state));
+    const { loading, response, error } = useSelector((state) => state?.join?.join);
+
+    const handleType = (event) => {
+        const text = event.target.value;
+        if (text.length <= 8) setCode(text);
+    };
 
     const handleSubmitCode = async () => {
         await dispatch(postCode({ code }));
+    };
+
+    const inputCss = {
+        fontSize: '16px',
+        ...(code.length > 0 && {
+            input: {
+                letterSpacing: '0.25rem'
+            }
+        })
     };
 
     return (
         <>
             <CustomParticles />
             <MotionContainer initial="initial" open>
-                <MainContainer maxWidth="xs">
+                <MainContainer maxWidth="sm">
                     <Box>
                         <JoinPaper>
                             <motion.div variants={varBounceIn}>
@@ -68,59 +86,65 @@ export default function JoinPage() {
                                 <Box displa="flex" flexDirection="column">
                                     {/* Server is not connected */}
                                     {error && (
-                                        <Alert severity="error" color="error" sx={{ mb: 2 }}>
+                                        <Alert severity="error" color="error">
                                             Сервер не подключен!
                                         </Alert>
                                     )}
 
                                     {/* Code is not valid */}
                                     {!loading && !response && (
-                                        <Alert severity="error" color="error" sx={{ mb: 2 }}>
+                                        <Alert severity="error" color="error">
                                             Код не существует!
                                         </Alert>
                                     )}
 
                                     {/* Code is valid */}
                                     {response && (
-                                        <Alert severity="success" color="success" sx={{ mb: 2 }}>
+                                        <Alert severity="success" color="success">
                                             Поздравляю, ваш код действителен!
                                         </Alert>
                                     )}
-
-                                    <FormControl variant="outlined">
+                                    {isMobile ? (
+                                        <Stack mt={1}>
+                                            <TextField
+                                                value={code}
+                                                fullWidth
+                                                onChange={handleType}
+                                                sx={{ ...inputCss, mb: 2 }}
+                                                autoFocus
+                                                placeholder="Введите код теста"
+                                            />
+                                            <Button variant="contained">присоединиться</Button>
+                                        </Stack>
+                                    ) : (
                                         <OutlinedInput
                                             value={code}
-                                            onChange={(event) => {
-                                                const text = event.target.value;
-                                                if (text.length <= 8) setCode(text);
-                                            }}
-                                            sx={{
-                                                fontSize: '24px',
-                                                ...(code.length > 0 && {
-                                                    input: {
-                                                        letterSpacing: '0.25rem'
-                                                    }
-                                                })
-                                            }}
+                                            fullWidth
+                                            onChange={handleType}
+                                            sx={{ ...inputCss, mt: 1 }}
                                             autoFocus
                                             placeholder="Введите код теста"
                                             endAdornment={
                                                 <InputAdornment position="end">
                                                     <Button variant="contained" onClick={handleSubmitCode}>
-                                                        вход
+                                                        присоединиться
                                                     </Button>
                                                 </InputAdornment>
                                             }
                                         />
-                                    </FormControl>
+                                    )}
                                     <Typography color="secondary" textAlign="center" mt={2}>
                                         <Link
-                                            href="#"
-                                            onClick={() => {}}
-                                            sx={{ textDecoration: 'none' }}
+                                            href="/sign-up"
+                                            sx={{
+                                                textDecoration: 'none',
+                                                '&:hover': {
+                                                    fontWeight: 600
+                                                }
+                                            }}
                                             color="primary.dark"
                                         >
-                                            У вас нет кода?
+                                            Нет кода? Зарегистрироваться
                                         </Link>
                                     </Typography>
                                 </Box>

@@ -10,8 +10,6 @@ import Typography from './Typography';
 import IconButton from './IconButton';
 import Autocomplete from './Autocomplete';
 
-// ----------------------------------------------------------------------
-
 export default function ComponentsOverrides(theme) {
     return merge(
         Card(theme),

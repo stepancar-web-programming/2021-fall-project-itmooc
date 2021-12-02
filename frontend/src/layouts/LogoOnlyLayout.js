@@ -1,8 +1,9 @@
 import { Link as RouterLink, Outlet } from 'react-router-dom';
 
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 
-import Logo from '../components/Logo';
+import { useMediaQuery } from '@mui/material';
+import Logo from '../modules/core/components/Logo';
 
 const HeaderStyle = styled('header')(({ theme }) => ({
     top: 0,
@@ -17,13 +18,18 @@ const HeaderStyle = styled('header')(({ theme }) => ({
 }));
 
 export default function LogoOnlyLayout() {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     return (
         <>
-            <HeaderStyle>
-                <RouterLink to="/">
-                    <Logo type="text-logo-white" />
-                </RouterLink>
-            </HeaderStyle>
+            {!isMobile && (
+                <HeaderStyle>
+                    <RouterLink to="/">
+                        <Logo type="text-logo-white" />
+                    </RouterLink>
+                </HeaderStyle>
+            )}
             <Outlet />
         </>
     );

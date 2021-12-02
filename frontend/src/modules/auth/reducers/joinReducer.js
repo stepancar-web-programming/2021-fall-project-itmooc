@@ -19,7 +19,7 @@ export const postCode = asyncAction('JOIN/POST_CODE', ({ code }) => {
 
 const initialState = {
     loading: false,
-    response: true,
+    response: null,
     error: false
 };
 
@@ -27,7 +27,7 @@ export default handleActions(
     {
         [postCode.START]: () => ({
             loading: true,
-            response: false,
+            response: null,
             error: false
         }),
 
@@ -39,7 +39,7 @@ export default handleActions(
 
         [postCode.FAILURE]: () => ({
             loading: true,
-            response: false,
+            response: null,
             error: true
         })
     },

@@ -1,11 +1,17 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
 
 import { Box } from '@mui/material';
 
 const Page = forwardRef(({ children, title = '', ...other }, ref) => (
-    <Box ref={ref} {...other}>
+    <Box
+        ref={ref}
+        {...other}
+        sx={{
+            overflow: 'auto'
+        }}
+    >
         <Helmet>
             <title>{title}</title>
         </Helmet>
