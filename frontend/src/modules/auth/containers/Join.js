@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
-    Link,
-    Container,
     Typography,
     Box,
     OutlinedInput,
     InputAdornment,
     Button,
-    Paper,
     Alert,
     Stack,
     TextField,
@@ -20,26 +17,9 @@ import {
 
 import Logo from '../../core/components/Logo';
 import { MotionContainer, varBounceIn } from '../../../components/animate';
-import { CustomParticles } from '../components';
-import { postCode } from '../reducers/joinReducer';
-
-const MainContainer = styled(Container)(() => ({
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around'
-}));
-
-const JoinPaper = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(4),
-    margin: theme.spacing(2, 0)
-}));
-
-const ImageBox = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(4)
-}));
+import { CustomParticles, MainContainer, ImageBox, JoinPaper, DecoratedLink } from '../components';
+import { postCode, resetState } from '../reducers/joinReducer';
+import MotionComponent from '../../../components/animate/MotionComponent';
 
 export default function Join() {
     const dispatch = useDispatch();
@@ -48,7 +28,7 @@ export default function Join() {
 
     const [code, setCode] = useState('');
 
-    const { loading, response, error } = useSelector((state) => state?.join?.join);
+    const { loading, response, error } = useSelector((state) => state?.auth?.join);
 
     const handleType = (event) => {
         const text = event.target.value;
@@ -56,7 +36,10 @@ export default function Join() {
     };
 
     const handleSubmitCode = async () => {
-        await dispatch(postCode({ code }));
+        if (response) {
+            dispatch(resetState());
+            setTimeout(() => dispatch(postCode({ code })), 650);
+        } else await dispatch(postCode({ code }));
     };
 
     const inputCss = {
@@ -67,6 +50,8 @@ export default function Join() {
             }
         })
     };
+
+    const customSpacing = isMobile ? 1 : 2;
 
     return (
         <>
@@ -84,28 +69,25 @@ export default function Join() {
 
                             <motion.div variants={varBounceIn}>
                                 <Box displa="flex" flexDirection="column">
-                                    {/* Server is not connected */}
-                                    {error && (
-                                        <Alert severity="error" color="error">
-                                            Сервер не подключен!
-                                        </Alert>
-                                    )}
+                                    <AnimatePresence>
+                                        {!loading && error && response && (
+                                            <MotionComponent>
+                                                <Alert severity="error" onClose={() => dispatch(resetState())}>
+                                                    {response}
+                                                </Alert>
+                                            </MotionComponent>
+                                        )}
+                                        {!loading && !error && response && (
+                                            <MotionComponent>
+                                                <Alert severity="success" onClose={() => dispatch(resetState())}>
+                                                    Поздравляю, ваш код действителен!
+                                                </Alert>
+                                            </MotionComponent>
+                                        )}
+                                    </AnimatePresence>
 
-                                    {/* Code is not valid */}
-                                    {!loading && !response && (
-                                        <Alert severity="error" color="error">
-                                            Код не существует!
-                                        </Alert>
-                                    )}
-
-                                    {/* Code is valid */}
-                                    {response && (
-                                        <Alert severity="success" color="success">
-                                            Поздравляю, ваш код действителен!
-                                        </Alert>
-                                    )}
                                     {isMobile ? (
-                                        <Stack mt={1}>
+                                        <Stack mt={2}>
                                             <TextField
                                                 value={code}
                                                 fullWidth
@@ -114,38 +96,39 @@ export default function Join() {
                                                 autoFocus
                                                 placeholder="Введите код теста"
                                             />
-                                            <Button variant="contained">присоединиться</Button>
+                                            <Button
+                                                variant="contained"
+                                                onClick={handleSubmitCode}
+                                                disabled={code.length < 8}
+                                            >
+                                                присоединиться
+                                            </Button>
                                         </Stack>
                                     ) : (
                                         <OutlinedInput
                                             value={code}
                                             fullWidth
                                             onChange={handleType}
-                                            sx={{ ...inputCss, mt: 1 }}
+                                            sx={{ ...inputCss, mt: 2 }}
                                             autoFocus
                                             placeholder="Введите код теста"
                                             endAdornment={
                                                 <InputAdornment position="end">
-                                                    <Button variant="contained" onClick={handleSubmitCode}>
+                                                    <Button
+                                                        variant="contained"
+                                                        onClick={handleSubmitCode}
+                                                        disabled={code.length < 8}
+                                                    >
                                                         присоединиться
                                                     </Button>
                                                 </InputAdornment>
                                             }
                                         />
                                     )}
-                                    <Typography color="secondary" textAlign="center" mt={2}>
-                                        <Link
-                                            href="/sign-up"
-                                            sx={{
-                                                textDecoration: 'none',
-                                                '&:hover': {
-                                                    fontWeight: 600
-                                                }
-                                            }}
-                                            color="primary.dark"
-                                        >
+                                    <Typography color="secondary" textAlign="center" mt={customSpacing}>
+                                        <DecoratedLink href="/sign-up" color="primary.dark">
                                             Нет кода? Зарегистрироваться
-                                        </Link>
+                                        </DecoratedLink>
                                     </Typography>
                                 </Box>
                             </motion.div>

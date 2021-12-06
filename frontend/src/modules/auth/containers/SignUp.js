@@ -52,7 +52,7 @@ export default function LoginContainer() {
             .oneOf([yup.ref('password')], 'Пароль подтверждения должен совпадать')
     });
 
-    const customSpacing = isMobile ? 2 : 1;
+    const customSpacing = isMobile ? 1 : 2;
 
     return (
         <>
@@ -114,7 +114,7 @@ export default function LoginContainer() {
                                                 helperText={errors.login}
                                                 sx={{ mb: 2 }}
                                             />
-                                            <Grid container spacing={customSpacing}>
+                                            <Grid container spacing={2}>
                                                 <Grid item xs={12} sm>
                                                     <TextField
                                                         label="Пароль"
@@ -200,8 +200,8 @@ export default function LoginContainer() {
                                                 </Grid>
                                             </Grid>
                                             <Typography variant="caption1">Пол</Typography>
-                                            <RadioGroup name="gender" value={values.gender}>
-                                                <Grid container spacing={customSpacing} mb={2}>
+                                            <RadioGroup name="gender" value={values.gender} onChange={handleChange}>
+                                                <Grid container spacing={customSpacing} mb={customSpacing}>
                                                     <Grid item xs={12} sm>
                                                         <FormControlLabel
                                                             label="Женщина"
@@ -239,7 +239,7 @@ export default function LoginContainer() {
                                         </FormControl>
                                     )}
                                 </Formik>
-                                <Typography color="secondary" textAlign="center" mt={2}>
+                                <Typography color="secondary" textAlign="center" mt={customSpacing}>
                                     <DecoratedLink href="/login" color="primary.dark">
                                         Уже есть аккаунт? Войти в систему
                                     </DecoratedLink>

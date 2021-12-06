@@ -4,6 +4,7 @@ require('./src/config/database').connect();
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
 const User = require('./src/models/user');
 const auth = require('./src/middlewares/auth');
@@ -11,6 +12,12 @@ const auth = require('./src/middlewares/auth');
 const app = express();
 
 app.use(express.json({ limit: '50mb' }));
+
+app.use(
+    cors({
+        origin: '*'
+    })
+);
 
 app.post('/register', async (req, res) => {
     try {
@@ -64,8 +71,10 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/welcome', auth, async (req, res) => {
-    await res.status(200).send('Welcome 🙌 ');
+app.post('/join', async (req, res) => {
+    const { code } = req.body;
+    if (code === '15112000') return res.status(200).send('Right');
+    return res.status(400).send('Wrong');
 });
 
 app.use('*', (req, res) => {

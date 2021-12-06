@@ -3,7 +3,7 @@ import { Box, Container, Link, Paper } from '@mui/material';
 
 export { default as CustomParticles } from './CustomParticles';
 
-export const MainContainer = styled(Container)(({ theme }) => ({
+export const MainContainer = styled(Container)(() => ({
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',

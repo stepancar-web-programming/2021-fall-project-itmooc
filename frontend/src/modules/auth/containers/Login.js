@@ -87,7 +87,7 @@ export default function Login() {
                                                 value={values.login}
                                                 error={errors.login}
                                                 helperText={errors.login}
-                                                sx={{ mb: customSpacing }}
+                                                sx={{ mb: 2 }}
                                             />
                                             <TextField
                                                 label="Пароль"

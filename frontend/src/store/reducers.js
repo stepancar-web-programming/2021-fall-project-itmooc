@@ -5,7 +5,7 @@ import menuReducer from '../modules/menu/reducers';
 
 export const store = configureStore({
     reducer: {
-        join: authReducer,
+        auth: authReducer,
         menu: menuReducer
     }
 });

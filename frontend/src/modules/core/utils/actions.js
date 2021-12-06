@@ -25,7 +25,7 @@ export const asyncAction = (type, requestFunc) => {
             (input, error) => ({
                 payload: {
                     input,
-                    error: error?.message,
+                    error: error?.response?.data || 'Сервер не подключен!',
                     errorCode: error?.response?.status
                 }
             }),

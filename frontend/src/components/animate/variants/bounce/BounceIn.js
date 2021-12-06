@@ -16,7 +16,10 @@ export const varBounceIn = {
         opacity: [0, 1, 1, 1, 1, 1],
         transition: TRANSITION_ENTER
     },
-    exit: varBounceOut.animate
+    exit: {
+        ...varBounceOut.animate,
+        transition: TRANSITION_EXIT
+    }
 };
 
 export const varBounceInUp = {
