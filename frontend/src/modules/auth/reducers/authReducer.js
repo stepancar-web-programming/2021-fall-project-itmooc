@@ -1,6 +1,7 @@
 import { handleActions } from 'redux-actions';
 import axios from 'axios';
 
+import { createAction } from '@reduxjs/toolkit';
 import { LOGIN_URL, SIGN_UP_URL } from '../constants';
 import { asyncAction } from '../../core/utils/actions';
 
@@ -9,6 +10,8 @@ export const login = asyncAction('AUTH/LOGIN', ({ login, password }) => axios.po
 export const signUp = asyncAction('AUTH/SIGN_UP', ({ login, password, birthday, gender }) =>
     axios.post(SIGN_UP_URL, { login, password, birthday, gender })
 );
+
+export const resetState = createAction('AUTH/RESET_STATE');
 
 const initialState = {
     loading: false,
@@ -48,7 +51,9 @@ export default handleActions(
             loading: false,
             user: null,
             error: true
-        })
+        }),
+
+        'JOIN/RESET_STATE': () => initialState
     },
     initialState
 );

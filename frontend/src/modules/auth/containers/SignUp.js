@@ -22,8 +22,10 @@ import { useTheme } from '@mui/material/styles';
 import Logo from '../../core/components/Logo';
 import { MotionContainer, varBounceIn } from '../../../components/animate';
 import { CustomParticles, ImageBox, JoinPaper, MainContainer, DecoratedLink } from '../components';
+import {useDispatch} from "react-redux";
 
 export default function LoginContainer() {
+    const dispatch = useDispatch();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 

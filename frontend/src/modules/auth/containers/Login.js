@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { styled, useTheme } from '@mui/material/styles';
 import {
@@ -21,14 +21,17 @@ import * as yup from 'yup';
 import { Logo } from '../../core/components';
 import { MotionContainer, varBounceIn } from '../../../components/animate';
 import { CustomParticles, JoinPaper, MainContainer, ImageBox, DecoratedLink } from '../components';
+import MotionComponent from '../../../components/animate/MotionComponent';
+import { resetState } from '../reducers/joinReducer';
 
 export default function Login() {
+    const dispatch = useDispatch();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const { loading, response, error } = { loading: false, response: false, error: false };
+    const { loading, user, error } = useSelector((state) => state?.auth?.auth);
 
     const loginSchema = yup.object().shape({
         login: yup.string().required('Необходимый'),
@@ -51,20 +54,22 @@ export default function Login() {
                         </motion.div>
                         <motion.div variants={varBounceIn}>
                             <Box displa="flex" flexDirection="column">
-                                {/* Server is not connected */}
-                                {error && (
-                                    <Alert severity="error" color="error" sx={{ mb: customSpacing }}>
-                                        Сервер не подключен!
-                                    </Alert>
-                                )}
-
-                                {/* Code is not valid */}
-                                {!loading && !response && (
-                                    <Alert severity="error" color="error" sx={{ mb: customSpacing }}>
-                                        Логин или пароль неверны!
-                                    </Alert>
-                                )}
-
+                                <AnimatePresence>
+                                    {!loading && error && user && (
+                                        <MotionComponent>
+                                            <Alert severity="error" onClose={() => dispatch(resetState())}>
+                                                {user}
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                    {!loading && !error && user && (
+                                        <MotionComponent>
+                                            <Alert severity="success" onClose={() => dispatch(resetState())}>
+                                                Поздравляю, ваш код действителен!
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                </AnimatePresence>
                                 <Formik
                                     initialValues={{ login: '', password: '' }}
                                     validateOnChange={isSubmitted}
@@ -85,7 +90,7 @@ export default function Login() {
                                                 fullWidth
                                                 onChange={handleChange}
                                                 value={values.login}
-                                                error={errors.login}
+                                                error={!!errors.login}
                                                 helperText={errors.login}
                                                 sx={{ mb: 2 }}
                                             />
@@ -95,7 +100,7 @@ export default function Login() {
                                                 fullWidth
                                                 onChange={handleChange}
                                                 value={values.password}
-                                                error={errors.password}
+                                                error={!!errors.password}
                                                 helperText={errors.password}
                                                 sx={{ mb: isMobile ? 2 : 4 }}
                                             />
