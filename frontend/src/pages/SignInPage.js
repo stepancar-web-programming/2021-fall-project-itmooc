@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 
 import Page from '../modules/core/components/Page';
-import { Login } from '../modules/auth';
+import { SignIn } from '../modules/auth';
 
-export default function LoginPage() {
+export default function SignInPage() {
     const theme = useTheme();
 
     useEffect(() => {
@@ -13,7 +13,7 @@ export default function LoginPage() {
 
     return (
         <Page title="Для студентов - ITMOOC">
-            <Login />
+            <SignIn />
         </Page>
     );
 }

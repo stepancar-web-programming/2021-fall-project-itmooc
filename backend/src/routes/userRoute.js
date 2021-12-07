@@ -3,6 +3,7 @@ require('../config/database').connect();
 
 const express = require('express');
 const cors = require('cors');
+const moment = require('moment');
 
 const auth = require('../middlewares/auth');
 const { checkUserPassword, isUserExisted, createUser } = require('../controllers/userController');
@@ -20,6 +21,7 @@ router.post('/sign-up', async (req, res) => {
         const { login, password, birthday, gender } = req.body;
         if (!(login && password && birthday && gender)) return res.status(400).send('Все данные необходимы.');
 
+        if (!moment(birthday, 'YYYY-MM-DD').isValid()) return res.status(400).send('Неверный день рождения.');
         if (new Date(birthday) >= Date.now())
             return res.status(400).send('Ваш день рождения должен быть раньше, чем сегодня.');
 

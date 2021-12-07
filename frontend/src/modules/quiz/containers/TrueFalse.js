@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { Button, Container, Grid, Typography } from '@mui/material';
 
-import { MotionContainer, varBounceIn } from '../../../components/animate';
 import { Question, VariantButton } from '../components';
 
 export default function TrueFalse() {

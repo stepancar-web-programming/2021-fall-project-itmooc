@@ -16,10 +16,9 @@ import {
 } from '@mui/material';
 
 import Logo from '../../core/components/Logo';
-import { MotionContainer, varBounceIn } from '../../../components/animate';
+import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
 import { CustomParticles, MainContainer, ImageBox, JoinPaper, DecoratedLink } from '../components';
 import { postCode, resetState } from '../reducers/joinReducer';
-import MotionComponent from '../../../components/animate/MotionComponent';
 
 export default function Join() {
     const dispatch = useDispatch();
@@ -66,7 +65,6 @@ export default function Join() {
                                     <Logo type="text-logo" />
                                 </ImageBox>
                             </motion.div>
-
                             <motion.div variants={varBounceIn}>
                                 <Box displa="flex" flexDirection="column">
                                     <AnimatePresence>
@@ -80,7 +78,7 @@ export default function Join() {
                                         {!loading && !error && response && (
                                             <MotionComponent>
                                                 <Alert severity="success" onClose={() => dispatch(resetState())}>
-                                                    Поздравляю, ваш код действителен!
+                                                    Поздравляем, ваш код действителен!
                                                 </Alert>
                                             </MotionComponent>
                                         )}
@@ -99,7 +97,7 @@ export default function Join() {
                                             <Button
                                                 variant="contained"
                                                 onClick={handleSubmitCode}
-                                                disabled={code.length < 8}
+                                                disabled={code.length < 8 || loading}
                                             >
                                                 присоединиться
                                             </Button>
@@ -117,7 +115,7 @@ export default function Join() {
                                                     <Button
                                                         variant="contained"
                                                         onClick={handleSubmitCode}
-                                                        disabled={code.length < 8}
+                                                        disabled={code.length < 8 || loading}
                                                     >
                                                         присоединиться
                                                     </Button>

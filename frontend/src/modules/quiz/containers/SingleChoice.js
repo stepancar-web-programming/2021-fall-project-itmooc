@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { Button, Container, Grid, Typography } from '@mui/material';
 
-import { MotionContainer, varBounceIn } from '../../../components/animate';
 import { Question, Variant } from '../components';
 
 export default function SingleChoice() {

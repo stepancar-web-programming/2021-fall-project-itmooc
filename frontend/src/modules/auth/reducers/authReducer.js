@@ -5,38 +5,40 @@ import { createAction } from '@reduxjs/toolkit';
 import { LOGIN_URL, SIGN_UP_URL } from '../constants';
 import { asyncAction } from '../../core/utils/actions';
 
-export const login = asyncAction('AUTH/LOGIN', ({ login, password }) => axios.post(LOGIN_URL, { login, password }));
+export const signIn = asyncAction('AUTH/LOGIN', ({ login, password }) => axios.post(LOGIN_URL, { login, password }));
 
-export const signUp = asyncAction('AUTH/SIGN_UP', ({ login, password, birthday, gender }) =>
-    axios.post(SIGN_UP_URL, { login, password, birthday, gender })
-);
+export const signUp = asyncAction('AUTH/SIGN_UP', ({ login, password, birthday, gender }) => {
+    console.log(login, password, birthday, gender);
+    return axios.post(SIGN_UP_URL, { login, password, birthday, gender });
+});
 
 export const resetState = createAction('AUTH/RESET_STATE');
 
 const initialState = {
     loading: false,
     user: null,
+    response: null,
     error: false
 };
 
 export default handleActions(
     {
-        [login.START]: () => ({
+        [signIn.START]: () => ({
             loading: true,
             user: null,
             response: null,
             error: false
         }),
-        [login.SUCCESS]: (state, { payload }) => ({
+        [signIn.SUCCESS]: (state, { payload }) => ({
             loading: false,
             user: payload?.data,
             response: null,
             error: false
         }),
-        [login.FAILURE]: (state, { payload }) => ({
+        [signIn.FAILURE]: (state, { payload }) => ({
             loading: false,
             user: null,
-            response: payload?.data,
+            response: payload?.error,
             error: true
         }),
 
@@ -55,11 +57,11 @@ export default handleActions(
         [signUp.FAILURE]: (state, { payload }) => ({
             loading: false,
             user: null,
-            response: payload?.data,
+            response: payload?.error,
             error: true
         }),
 
-        'JOIN/RESET_STATE': () => initialState
+        'AUTH/RESET_STATE': () => initialState
     },
     initialState
 );

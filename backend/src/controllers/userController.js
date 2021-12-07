@@ -9,12 +9,12 @@ const User = require('../models/user');
 const isUserExisted = async ({ login }) => await User.findOne({ login });
 
 const checkUserPassword = async ({ login, password }) => {
-    const user = await User.findOne({ login });
+    let user = await User.findOne({ login });
     if (user && (await bcrypt.compare(password, user.password))) {
         user.token = jwt.sign({ user_id: user._id, login }, process.env.TOKEN_KEY, {
             expiresIn: '2h'
         });
-    }
+    } else user = null;
     return user;
 };
 

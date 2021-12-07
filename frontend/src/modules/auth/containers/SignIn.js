@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
+import * as yup from 'yup';
 
 import { useTheme } from '@mui/material/styles';
 import { Typography, Box, FormControl, TextField, Button, Alert, useMediaQuery } from '@mui/material';
 
-import * as yup from 'yup';
 import { Logo } from '../../core/components';
-import { MotionContainer, varBounceIn } from '../../../components/animate';
+import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
 import { CustomParticles, JoinPaper, MainContainer, ImageBox, DecoratedLink } from '../components';
-import MotionComponent from '../../../components/animate/MotionComponent';
-import { login, resetState } from '../reducers/authReducer';
+import { signIn, resetState } from '../reducers/authReducer';
 
-export default function Login() {
+export default function SignIn() {
     const dispatch = useDispatch();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -44,7 +43,7 @@ export default function Login() {
                         <motion.div variants={varBounceIn}>
                             <Box displa="flex" flexDirection="column">
                                 <AnimatePresence>
-                                    {!loading && error && (
+                                    {!loading && error && response && (
                                         <MotionComponent>
                                             <Alert severity="error" onClose={() => dispatch(resetState())}>
                                                 {response}
@@ -54,7 +53,7 @@ export default function Login() {
                                     {!loading && !error && user && (
                                         <MotionComponent>
                                             <Alert severity="success" onClose={() => dispatch(resetState())}>
-                                                Поздравляю, ваш код действителен!
+                                                Поздравляем, вы успешно вошли в систему.
                                             </Alert>
                                         </MotionComponent>
                                     )}
@@ -65,12 +64,11 @@ export default function Login() {
                                     validateOnBlur={isSubmitted}
                                     validationSchema={loginSchema}
                                     onSubmit={async (values) => {
-                                        setIsSubmitted(true);
-                                        console.log(values);
+                                        const { login, password } = values;
                                         if (user || response) {
                                             dispatch(resetState());
-                                            setTimeout(() => dispatch(login(values)), 650);
-                                        } else await dispatch(login(values));
+                                            setTimeout(() => dispatch(signIn({ login, password })), 650);
+                                        } else await dispatch(signIn({ login, password }));
                                     }}
                                 >
                                     {({ values, errors, handleChange, handleSubmit, submitForm, isSubmitting }) => (
@@ -88,6 +86,7 @@ export default function Login() {
                                             <TextField
                                                 label="Пароль"
                                                 name="password"
+                                                type="password"
                                                 fullWidth
                                                 onChange={handleChange}
                                                 value={values.password}
@@ -99,7 +98,10 @@ export default function Login() {
                                                 variant="contained"
                                                 disabled={loading || isSubmitting}
                                                 type="submit"
-                                                onClick={submitForm}
+                                                onClick={async () => {
+                                                    setIsSubmitted(true);
+                                                    await submitForm();
+                                                }}
                                             >
                                                 Войти
                                             </Button>

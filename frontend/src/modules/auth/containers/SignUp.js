@@ -21,19 +21,18 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import Logo from '../../core/components/Logo';
-import { MotionContainer, varBounceIn } from '../../../components/animate';
+import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
 import { CustomParticles, ImageBox, JoinPaper, MainContainer, DecoratedLink } from '../components';
-import MotionComponent from '../../../components/animate/MotionComponent';
 import { signUp, resetState } from '../reducers/authReducer';
 
-export default function LoginContainer() {
+export default function SignUp() {
     const dispatch = useDispatch();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const { loading, user, error } = useSelector((state) => state?.auth?.auth);
+    const { loading, user, response, error } = useSelector((state) => state?.auth?.auth);
 
     const signUpSchema = yup.object().shape({
         login: yup
@@ -70,21 +69,20 @@ export default function LoginContainer() {
                                 <Logo type="text-logo" />
                             </ImageBox>
                         </motion.div>
-
                         <motion.div variants={varBounceIn}>
                             <Box displa="flex" flexDirection="column">
                                 <AnimatePresence>
-                                    {!loading && error && user && (
+                                    {!loading && error && response && (
                                         <MotionComponent>
                                             <Alert severity="error" onClose={() => dispatch(resetState())}>
-                                                {user}
+                                                {response}
                                             </Alert>
                                         </MotionComponent>
                                     )}
                                     {!loading && !error && user && (
                                         <MotionComponent>
                                             <Alert severity="success" onClose={() => dispatch(resetState())}>
-                                                Поздравляю, ваш код действителен!
+                                                Поздравляю, вы успешно зарегистрировались.
                                             </Alert>
                                         </MotionComponent>
                                     )}
@@ -104,13 +102,20 @@ export default function LoginContainer() {
                                     validateOnChange={isSubmitted}
                                     validateOnBlur={isSubmitted}
                                     validationSchema={signUpSchema}
-                                    onSubmit={(values, { setSubmitting }) => {
-                                        setSubmitting(false);
-                                        // dispatch(login({ login, password }));
+                                    onSubmit={async (values) => {
+                                        const { login, password, day, month, year, gender } = values;
+                                        const birthday = `${year}-${month}-${day}`;
+                                        if (user || response) {
+                                            dispatch(resetState());
+                                            setTimeout(
+                                                () => dispatch(signUp({ login, password, birthday, gender })),
+                                                650
+                                            );
+                                        } else await dispatch(signUp({ login, password, birthday, gender }));
                                     }}
                                 >
                                     {({ values, errors, handleChange, handleSubmit, isSubmitting, submitForm }) => (
-                                        <FormControl onSubmit={handleSubmit} fullWidth>
+                                        <FormControl onSubmit={handleSubmit} fullWidth sx={{ mt: 2 }}>
                                             <TextField
                                                 label="Логин"
                                                 name="login"
@@ -159,6 +164,7 @@ export default function LoginContainer() {
                                                         select
                                                         fullWidth
                                                         value={values.day}
+                                                        onChange={handleChange}
                                                     >
                                                         {[...Array(31)].map((_, i) => (
                                                             <MenuItem value={i + 1} key={i}>
@@ -174,6 +180,7 @@ export default function LoginContainer() {
                                                         select
                                                         fullWidth
                                                         value={values.month}
+                                                        onChange={handleChange}
                                                     >
                                                         <MenuItem value={1}>Январь</MenuItem>
                                                         <MenuItem value={2}>Февраль</MenuItem>
@@ -196,6 +203,7 @@ export default function LoginContainer() {
                                                         select
                                                         fullWidth
                                                         value={values.year}
+                                                        onChange={handleChange}
                                                     >
                                                         {((currentYear = new Date().getFullYear()) =>
                                                             [...Array(currentYear - 1900 + 1)].map((_, i) => (
@@ -234,7 +242,7 @@ export default function LoginContainer() {
                                             </RadioGroup>
                                             <Button
                                                 variant="contained"
-                                                disabled={isSubmitting}
+                                                disabled={loading || isSubmitting}
                                                 type="submit"
                                                 onClick={async () => {
                                                     setIsSubmitted(true);
@@ -247,7 +255,7 @@ export default function LoginContainer() {
                                     )}
                                 </Formik>
                                 <Typography color="secondary" textAlign="center" mt={customSpacing}>
-                                    <DecoratedLink href="/login" color="primary.dark">
+                                    <DecoratedLink href="/sign-in" color="primary.dark">
                                         Уже есть аккаунт? Войти в систему
                                     </DecoratedLink>
                                 </Typography>

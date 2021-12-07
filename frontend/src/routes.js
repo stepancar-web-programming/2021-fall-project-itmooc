@@ -3,7 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 
-import { JoinPage, Page404, LoginPage, SignUpPage, QuizPage, HomePage } from './pages';
+import { JoinPage, Page404, SignInPage, SignUpPage, QuizPage, HomePage } from './pages';
 
 export default function Router() {
     return useRoutes([
@@ -12,7 +12,7 @@ export default function Router() {
             element: <LogoOnlyLayout />,
             children: [
                 { path: '', element: <JoinPage /> },
-                { path: 'login', element: <LoginPage /> },
+                { path: 'sign-in', element: <SignInPage /> },
                 { path: 'sign-up', element: <SignUpPage /> },
                 { path: '404', element: <Page404 /> },
                 { path: '*', element: <Navigate to="/404" /> }

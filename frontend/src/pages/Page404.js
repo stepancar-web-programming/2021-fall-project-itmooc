@@ -4,7 +4,7 @@ import { Box, Button, Typography, Container } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { MotionContainer, varBounceIn } from '../components/animate';
+import { MotionContainer, varBounceIn } from '../modules/core/animate';
 import Page from '../modules/core/components/Page';
 
 const RootStyle = styled(Page)(({ theme }) => ({
