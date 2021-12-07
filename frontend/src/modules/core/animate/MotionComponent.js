@@ -8,9 +8,9 @@ MotionComponent.propTypes = {
     children: PropTypes.node
 };
 
-export default function MotionComponent({ variant = varBounceIn, children }) {
+export default function MotionComponent({ variant = varBounceIn, children, ...other }) {
     return (
-        <motion.div animate={variant.animate} exit={variant.exit}>
+        <motion.div animate={variant.animate} exit={variant.exit} {...other}>
             {children}
         </motion.div>
     );

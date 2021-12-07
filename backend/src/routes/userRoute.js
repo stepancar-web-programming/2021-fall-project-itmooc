@@ -36,7 +36,7 @@ router.post('/sign-up', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/sign-in', async (req, res) => {
     try {
         const { login, password } = req.body;
         if (!(login && password)) return res.status(400).send('Все данные необходимы.');
