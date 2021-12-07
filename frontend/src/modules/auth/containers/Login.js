@@ -3,26 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { styled, useTheme } from '@mui/material/styles';
-import {
-    Link,
-    Container,
-    Typography,
-    Box,
-    FormControl,
-    TextField,
-    Button,
-    Paper,
-    Alert,
-    useMediaQuery
-} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { Typography, Box, FormControl, TextField, Button, Alert, useMediaQuery } from '@mui/material';
 
 import * as yup from 'yup';
 import { Logo } from '../../core/components';
 import { MotionContainer, varBounceIn } from '../../../components/animate';
 import { CustomParticles, JoinPaper, MainContainer, ImageBox, DecoratedLink } from '../components';
 import MotionComponent from '../../../components/animate/MotionComponent';
-import { resetState } from '../reducers/joinReducer';
+import { login, resetState } from '../reducers/authReducer';
 
 export default function Login() {
     const dispatch = useDispatch();
@@ -31,7 +20,7 @@ export default function Login() {
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const { loading, user, error } = useSelector((state) => state?.auth?.auth);
+    const { loading, user, response, error } = useSelector((state) => state?.auth?.auth);
 
     const loginSchema = yup.object().shape({
         login: yup.string().required('Необходимый'),
@@ -55,10 +44,10 @@ export default function Login() {
                         <motion.div variants={varBounceIn}>
                             <Box displa="flex" flexDirection="column">
                                 <AnimatePresence>
-                                    {!loading && error && user && (
+                                    {!loading && error && (
                                         <MotionComponent>
                                             <Alert severity="error" onClose={() => dispatch(resetState())}>
-                                                {user}
+                                                {response}
                                             </Alert>
                                         </MotionComponent>
                                     )}
@@ -75,15 +64,17 @@ export default function Login() {
                                     validateOnChange={isSubmitted}
                                     validateOnBlur={isSubmitted}
                                     validationSchema={loginSchema}
-                                    onSubmit={(values, { setSubmitting }) => {
-                                        setTimeout(() => {
-                                            alert(JSON.stringify(values, null, 2));
-                                            setSubmitting(false);
-                                        }, 400);
+                                    onSubmit={async (values) => {
+                                        setIsSubmitted(true);
+                                        console.log(values);
+                                        if (user || response) {
+                                            dispatch(resetState());
+                                            setTimeout(() => dispatch(login(values)), 650);
+                                        } else await dispatch(login(values));
                                     }}
                                 >
-                                    {({ values, errors, handleChange, handleSubmit, isSubmitting, submitForm }) => (
-                                        <FormControl onSubmit={handleSubmit} fullWidth>
+                                    {({ values, errors, handleChange, handleSubmit, submitForm, isSubmitting }) => (
+                                        <FormControl onSubmit={handleSubmit} fullWidth sx={{ mt: 2 }}>
                                             <TextField
                                                 label="Логин"
                                                 name="login"
@@ -106,12 +97,9 @@ export default function Login() {
                                             />
                                             <Button
                                                 variant="contained"
-                                                disabled={isSubmitting}
+                                                disabled={loading || isSubmitting}
                                                 type="submit"
-                                                onClick={async () => {
-                                                    setIsSubmitted(true);
-                                                    await submitForm();
-                                                }}
+                                                onClick={submitForm}
                                             >
                                                 Войти
                                             </Button>

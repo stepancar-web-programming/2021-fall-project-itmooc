@@ -2,10 +2,18 @@ require('dotenv').config();
 require('../config/database').connect();
 
 const express = require('express');
-const router = express.Router();
+const cors = require('cors');
 
 const auth = require('../middlewares/auth');
 const { checkUserPassword, isUserExisted, createUser } = require('../controllers/userController');
+
+const router = express.Router();
+
+router.use(
+    cors({
+        origin: '*'
+    })
+);
 
 router.post('/sign-up', async (req, res) => {
     try {
@@ -29,7 +37,7 @@ router.post('/sign-up', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { login, password } = req.body;
-        if (!(login && password)) res.status(400).send('Все данные необходимы.');
+        if (!(login && password)) return res.status(400).send('Все данные необходимы.');
 
         const user = await checkUserPassword({ login, password });
         if (user) return res.status(200).json(user);

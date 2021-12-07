@@ -24,32 +24,38 @@ export default handleActions(
         [login.START]: () => ({
             loading: true,
             user: null,
+            response: null,
             error: false
         }),
         [login.SUCCESS]: (state, { payload }) => ({
             loading: false,
             user: payload?.data,
+            response: null,
             error: false
         }),
-        [login.FAILURE]: () => ({
+        [login.FAILURE]: (state, { payload }) => ({
             loading: false,
             user: null,
+            response: payload?.data,
             error: true
         }),
 
         [signUp.START]: () => ({
             loading: true,
             user: null,
+            response: null,
             error: false
         }),
         [signUp.SUCCESS]: (state, { payload }) => ({
             loading: false,
             user: payload?.data,
+            response: null,
             error: false
         }),
-        [signUp.FAILURE]: () => ({
+        [signUp.FAILURE]: (state, { payload }) => ({
             loading: false,
             user: null,
+            response: payload?.data,
             error: true
         }),
 

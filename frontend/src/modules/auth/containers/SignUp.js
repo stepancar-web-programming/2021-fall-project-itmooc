@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import * as yup from 'yup';
 
 import {
@@ -17,12 +18,13 @@ import {
     FormControlLabel,
     useMediaQuery
 } from '@mui/material';
-
 import { useTheme } from '@mui/material/styles';
+
 import Logo from '../../core/components/Logo';
 import { MotionContainer, varBounceIn } from '../../../components/animate';
 import { CustomParticles, ImageBox, JoinPaper, MainContainer, DecoratedLink } from '../components';
-import {useDispatch} from "react-redux";
+import MotionComponent from '../../../components/animate/MotionComponent';
+import { signUp, resetState } from '../reducers/authReducer';
 
 export default function LoginContainer() {
     const dispatch = useDispatch();
@@ -31,7 +33,7 @@ export default function LoginContainer() {
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const { loading, response, error } = { loading: false, response: false, error: false };
+    const { loading, user, error } = useSelector((state) => state?.auth?.auth);
 
     const signUpSchema = yup.object().shape({
         login: yup
@@ -71,18 +73,22 @@ export default function LoginContainer() {
 
                         <motion.div variants={varBounceIn}>
                             <Box displa="flex" flexDirection="column">
-                                {error && (
-                                    <Alert severity="error" color="error" sx={{ mb: 2 }}>
-                                        Сервер не подключен!
-                                    </Alert>
-                                )}
-
-                                {!loading && !response && (
-                                    <Alert severity="error" color="error" sx={{ mb: 2 }}>
-                                        Логин или пароль неверны!
-                                    </Alert>
-                                )}
-
+                                <AnimatePresence>
+                                    {!loading && error && user && (
+                                        <MotionComponent>
+                                            <Alert severity="error" onClose={() => dispatch(resetState())}>
+                                                {user}
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                    {!loading && !error && user && (
+                                        <MotionComponent>
+                                            <Alert severity="success" onClose={() => dispatch(resetState())}>
+                                                Поздравляю, ваш код действителен!
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                </AnimatePresence>
                                 <Formik
                                     initialValues={{
                                         firstName: '',
@@ -99,9 +105,8 @@ export default function LoginContainer() {
                                     validateOnBlur={isSubmitted}
                                     validationSchema={signUpSchema}
                                     onSubmit={(values, { setSubmitting }) => {
-                                        alert(values);
-                                        console.log(values);
                                         setSubmitting(false);
+                                        // dispatch(login({ login, password }));
                                     }}
                                 >
                                     {({ values, errors, handleChange, handleSubmit, isSubmitting, submitForm }) => (
