@@ -4,8 +4,13 @@ const moment = require('moment');
 const app = require('../app');
 const User = require('../src/models/user');
 
+beforeAll(async () => {
+    try {
+        await User.deleteOne({ login: 'test_account.123' });
+    } catch (error) {}
+});
+
 test('Create account: successful created account', async () => {
-    await User.deleteOne({ login: 'test_account.123' });
     await request(app)
         .post('/api/v1/sign-up')
         .send({

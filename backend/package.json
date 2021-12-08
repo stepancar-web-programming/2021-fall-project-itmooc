@@ -6,7 +6,7 @@
     "scripts": {
         "start": "node index.js",
         "dev": "nodemon index.js",
-        "test": "echo \\\"Error: no __test__ specified\\\" && exit 1",
+        "test": "jest",
         "lint": "eslint --ext .js,.jsx ./",
         "lint:fix": "eslint --fix --ext .js,.jsx ./"
     },
