@@ -6,7 +6,7 @@ const VariantButton = styled(Button, {
 })(({ theme, backgroundColor }) => ({
     color: theme.palette.getContrastText(backgroundColor),
     backgroundColor,
-    height: '200px !important',
+    height: '100% !important',
     '&:hover': {
         backgroundColor: lighten(backgroundColor, 0.3)
     }
