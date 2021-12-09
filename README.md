@@ -44,9 +44,10 @@ _Если у учащегося есть учетная запись, он мо�
 ## Technical tools
 
 Для frontend:
-- ReactJS (с ES2021);
+- ReactJS (с ES2020);
 - MUI library с настройкой от Minimal UI;
 - Redux и Axios.
+- Yup и Formik для форм;
 
 Для backend:
 - NodeJS;
