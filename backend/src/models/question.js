@@ -1,10 +1,5 @@
 const mongoose = require('mongoose');
 
-const trueFalseSchema = new mongoose.Schema({
-    question: { type: String, required: true },
-    answer: { type: Boolean, default: true }
-});
-
 const singleChoiceSchema = new mongoose.Schema({
     question: { type: String, required: true },
     variants: { type: Array.of(String), required: true },
@@ -29,8 +24,4 @@ const fillInTheBlankSchema = new mongoose.Schema({
     answer: { type: String, required: true }
 });
 
-const quizSchema = new mongoose.Schema({
-    questions: { type: Array.from([trueFalseSchema, singleChoiceSchema, multipleChoiceSchema, fillInTheBlankSchema]) }
-});
-
-module.exports = mongoose.model('quiz', quizSchema);
+module.exports = { singleChoiceSchema, multipleChoiceSchema, fillInTheBlankSchema };
