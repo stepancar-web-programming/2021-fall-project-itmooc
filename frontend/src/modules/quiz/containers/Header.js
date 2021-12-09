@@ -1,52 +1,29 @@
 import React, { useState } from 'react';
 
-import { Typography, Box, LinearProgress, IconButton, Divider } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { linearProgressClasses } from '@mui/material/LinearProgress';
+import { Typography, Box, IconButton, Divider } from '@mui/material';
 
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import TimerIcon from '@mui/icons-material/Timer';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import CropFreeIcon from '@mui/icons-material/CropFree';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
+import ZoomInMapIcon from '@mui/icons-material/ZoomInMap';
 
 import { Logo } from '../../core/components';
 import { CustomTooltip } from '../components';
 
-const BorderLinearProgress = styled(LinearProgress)(() => ({
-    height: 10,
-    borderRadius: 5,
-    border: '1px solid white',
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-        border: '1 solid white',
-        backgroundColor: 'black'
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-        borderRadius: 5,
-        backgroundColor: 'white'
-    }
-}));
-
 export default function Header() {
     const [timerStyle, setTimerStyle] = useState(true);
+    const [fullscreen, setFullscreen] = useState(window.screenTop || window.screenY);
+
+    const switchFullscreen = async () => {
+        setFullscreen(!fullscreen);
+        if (!window.screenTop && !window.screenY) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+    };
 
     return (
         <Box display="flex" justifyContent="space-between" alignItems="center" p={2} sx={{ height: '64px' }}>
             <Logo type="text-logo-white" />
-            <CustomTooltip title="Процесс">
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box display="flex" justifyContent="center" alignItems="center" mr={1} sx={{ minWidth: 35 }}>
-                        <Typography variant="h6" component="p" color="white" sx={{ fontSize: '24px !important' }}>
-                            5
-                        </Typography>
-                        <Typography variant="h6" component="p" color="white">
-                            /7
-                        </Typography>
-                    </Box>
-                    <Box sx={{ minWidth: 400 }}>
-                        <BorderLinearProgress variant="determinate" value={700 / 11} />
-                    </Box>
-                </Box>
-            </CustomTooltip>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Box
                     display="flex"
@@ -85,8 +62,11 @@ export default function Header() {
                     </CustomTooltip>
                 </Box>
                 <CustomTooltip title="Полноэкранный">
-                    <IconButton sx={{ bgcolor: (theme) => theme.palette.grey[400], borderRadius: 1 }}>
-                        <CropFreeIcon />
+                    <IconButton
+                        sx={{ bgcolor: (theme) => theme.palette.grey[900], borderRadius: 1 }}
+                        onClick={switchFullscreen}
+                    >
+                        {fullscreen ? <ZoomOutMapIcon /> : <ZoomInMapIcon />}
                     </IconButton>
                 </CustomTooltip>
             </Box>

@@ -31,7 +31,8 @@ export default function Join() {
 
     const handleType = (event) => {
         const text = event.target.value;
-        if (text.length <= 8) setCode(text);
+        const regex = new RegExp(/^\d{0,8}$/);
+        if (regex.test(text)) setCode(text);
     };
 
     const handleSubmitCode = async () => {

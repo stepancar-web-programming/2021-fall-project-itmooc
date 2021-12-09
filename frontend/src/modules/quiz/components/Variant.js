@@ -31,7 +31,8 @@ export default function Variant({ contents, answer }) {
                 <Alert
                     onClose={() => setOpen(false)}
                     severity={chosen === answer ? 'success' : 'error'}
-                    sx={{ width: '100%' }}
+                    sx={{ minWidth: '1200px', border: '2px solid white' }}
+                    variant="filled"
                 >
                     {chosen === answer ? 'ПРАВИЛЬНЫЙ' : 'НЕКОРРЕКТНЫЙ'}
                 </Alert>
@@ -59,6 +60,7 @@ export default function Variant({ contents, answer }) {
                                         fullWidth
                                         backgroundColor={wrongColor}
                                         onClick={() => chooseVariant(i)}
+                                        sx={{ border: '2px solid white' }}
                                     >
                                         {content}
                                     </VariantButton>
@@ -71,6 +73,7 @@ export default function Variant({ contents, answer }) {
                                         fullWidth
                                         backgroundColor={rightColor}
                                         onClick={() => chooseVariant(i)}
+                                        sx={{ ...(i === chosen && { border: '2px solid white' }) }}
                                     >
                                         {content}
                                     </VariantButton>
