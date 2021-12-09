@@ -53,8 +53,8 @@ router.post('/sign-in', async (req, res) => {
 
 router.post('/join', async (req, res) => {
     const { code } = req.body;
-    if (code === '15112000') return res.status(200).send('Right');
-    return res.status(400).send('Wrong');
+    if (code === '15112000') return res.status(200).send('Поздравляем, ваш код присоединения правильный!');
+    return res.status(400).send('Ваш код присоединения правильный ');
 });
 
 module.exports = router;
