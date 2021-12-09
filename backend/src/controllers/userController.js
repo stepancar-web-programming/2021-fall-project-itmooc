@@ -6,7 +6,14 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-const isUserExisted = async ({ login }) => await User.findOne({ login });
+const safeUser = (user) => {
+    if (!user) return null;
+    const userDto = user.toObject();
+    delete userDto.password;
+    return userDto;
+};
+
+const isUserExisted = async ({ login }) => safeUser(await User.findOne({ login }));
 
 const checkUserPassword = async ({ login, password }) => {
     let user = await User.findOne({ login });
@@ -15,7 +22,7 @@ const checkUserPassword = async ({ login, password }) => {
             expiresIn: '2h'
         });
     } else user = null;
-    return user;
+    return safeUser(user);
 };
 
 const createUser = async ({ login, password, birthday, gender }) => {
@@ -29,7 +36,7 @@ const createUser = async ({ login, password, birthday, gender }) => {
     user.token = jwt.sign({ user_id: user._id, login }, process.env.TOKEN_KEY, {
         expiresIn: '2h'
     });
-    return user;
+    return safeUser(user);
 };
 
 module.exports = { isUserExisted, checkUserPassword, createUser };
