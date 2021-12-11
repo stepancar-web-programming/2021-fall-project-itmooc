@@ -6,6 +6,7 @@ const cors = require('cors');
 
 const app = express();
 const userRoute = require('./src/routes/userRoute');
+const quizRoute = require('./src/routes/quizRoute');
 
 app.use(express.json({ limit: '50mb' }));
 
@@ -16,6 +17,7 @@ app.use(
 );
 
 app.use('/api/v1', userRoute);
+// app.use('/api/v1', quizRoute);
 
 app.use('*', (req, res) => {
     res.status(404).json({

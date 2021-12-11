@@ -1,47 +1,58 @@
 const mongoose = require('mongoose');
 
-const User = require('./user');
+// const singleChoiceSchema = new mongoose.Schema(
+//     {
+//         question: { type: String, required: true },
+//         variants: { type: Array.of(String), required: true },
+//         answer: { type: Number, min: 0, max: 10, required: true }
+//     },
+//     { _id: false }
+// );
+//
+// const multipleChoiceSchema = new mongoose.Schema(
+//     {
+//         question: { type: String, required: true },
+//         variants: { type: Array.of(String), required: true },
+//         answers: {
+//             type: Array.of({
+//                 type: Number,
+//                 min: 0,
+//                 max: 10
+//             }),
+//             required: true
+//         }
+//     },
+//     { _id: false }
+// );
+//
+// const fillInTheBlankSchema = new mongoose.Schema(
+//     {
+//         question: { type: String, required: true },
+//         answer: { type: String, required: true }
+//     },
+//     { _id: false }
+// );
 
-const singleChoiceSchema = new mongoose.Schema({
-    question: { type: String, required: true },
-    variants: { type: Array.of(String), required: true },
-    answer: { type: Number, required: true, min: 0, max: this.variants.length }
-});
-
-const multipleChoiceSchema = new mongoose.Schema({
-    question: { type: String, required: true },
-    variants: { type: Array.of(String), required: true },
-    answers: {
-        type: Array.of({
-            type: Number,
-            min: 0,
-            max: this.variants.length
-        }),
-        required: true
-    }
-});
-
-const fillInTheBlankSchema = new mongoose.Schema({
-    question: { type: String, required: true },
-    answer: { type: String, required: true }
-});
-
-const recordSchema = new mongoose.Schema({
-    user: { type: User },
-    score: { type: 'Number', min: 0 },
-    timing: { type: 'Number', min: 0 }
-});
+const recordSchema = new mongoose.Schema(
+    {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+        score: { type: 'Number', min: 0 },
+        timing: { type: 'Number', min: 0 }
+    },
+    { _id: false }
+);
 
 const quizSchema = new mongoose.Schema(
     {
-        questions: { type: Array.from([singleChoiceSchema, multipleChoiceSchema, fillInTheBlankSchema]) },
-        contestants: { type: recordSchema },
-        code: { type: String, minlength: 8, maxlength: 8, trim: true, index: true, required: true, sparse: true },
-        passcode: { type: String, minlength: 8, maxlength: 8, trim: true, index: true, required: true, sparse: true }
+        questions: { type: Array.of(mongoose.Schema.Types.Mixed) },
+        contestants: { type: Array.of(recordSchema), default: [] },
+        code: { type: String, minlength: 8, maxlength: 8 },
+        password: { type: String, minlength: 8, maxlength: 8 },
+        auth: { type: Boolean, default: false }
     },
     {
         timestamps: true
     }
 );
 
-module.exports = mongoose.model('quiz', quizSchema);
+module.exports = mongoose.model('quizes', quizSchema);

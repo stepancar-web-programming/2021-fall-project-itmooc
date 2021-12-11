@@ -53,8 +53,23 @@ router.post('/sign-in', async (req, res) => {
 
 router.post('/join', async (req, res) => {
     const { code } = req.body;
-    if (code === '15112000') return res.status(200).send('Поздравляем, ваш код присоединения правильный!');
-    return res.status(400).send('Ваш код присоединения правильный ');
+    // const quiz = await findQuizByCode({ code });
+    // if (quiz?.auth) return res.status(401).send('');
+    // if (quiz?.password) return res.status(403).send('');
+    // if (quiz) return res.status(200).send('Поздравляем, ваш код присоединения правильный!');
+    // return res.status(404).send('There is not quiz using your code.');
+    if (code === '15112000')
+        return res.status(200).json({
+            passwordRequired: true
+        });
+    return res.status(404).send('Ваш код не существует.');
+});
+
+router.post('/join-password', async (req, res) => {
+    const { code, password } = req.body;
+    if (code === '15112000' && password === 'duykhanh')
+        return res.status(200).send('Перенаправить на страницу викторины');
+    return res.status(400).send('Ваш код или ваш пароль неверны.');
 });
 
 module.exports = router;

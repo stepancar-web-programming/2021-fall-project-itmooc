@@ -12,7 +12,7 @@ export default function JoinPage() {
     });
 
     return (
-        <Page title="Для студентов - ITMOOC">
+        <Page title="Присоединиться - ITMOOC">
             <Join />
         </Page>
     );

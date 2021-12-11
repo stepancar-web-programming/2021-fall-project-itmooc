@@ -8,6 +8,8 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import MusicOffIcon from '@mui/icons-material/MusicOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 import { CustomTooltip } from '../components';
 
@@ -70,11 +72,11 @@ export default function Footer() {
                     </Box>
                 </Box>
             </CustomTooltip>
-            <Container disableGutters>
+            <Container disableGutters sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <CustomTooltip title="Музыка">
                     <IconButton
                         sx={{
-                            bgcolor: (theme) => theme.palette.warning.main,
+                            bgcolor: (theme) => theme.palette.grey[800],
                             borderRadius: 2,
                             color: 'white',
                             px: 2,
@@ -82,15 +84,15 @@ export default function Footer() {
                         }}
                         onClick={() => setMusicOn(!musicOn)}
                     >
-                        {musicOn ? <MusicOffIcon /> : <MusicNoteIcon />}
+                        <ArrowLeftIcon />
                     </IconButton>
                 </CustomTooltip>
                 <CustomTooltip title="Звук">
                     <IconButton
-                        sx={{ bgcolor: (theme) => theme.palette.info.main, borderRadius: 2, color: 'white', px: 2 }}
+                        sx={{ bgcolor: (theme) => theme.palette.grey[800], borderRadius: 2, color: 'white', px: 2 }}
                         onClick={() => setSoundOn(!musicOn)}
                     >
-                        {soundOn ? <VolumeUpIcon /> : <VolumeMuteIcon />}
+                        <ArrowRightIcon />
                     </IconButton>
                 </CustomTooltip>
             </Container>
