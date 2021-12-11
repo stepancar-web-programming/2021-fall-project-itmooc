@@ -8,7 +8,6 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import LogoutIcon from '@mui/icons-material/Logout';
-// import { logout } from '@core/auth/reducer';
 
 export const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {

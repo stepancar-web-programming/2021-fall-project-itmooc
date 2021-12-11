@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import { Box, IconButton, LinearProgress, Typography, Container } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -27,7 +28,7 @@ const BorderLinearProgress = styled(LinearProgress)(() => ({
     }
 }));
 
-export default function Footer() {
+export default function Footer({ current, all, setPage }) {
     const [musicOn, setMusicOn] = useState(true);
     const [soundOn, setSoundOn] = useState(true);
 
@@ -61,14 +62,14 @@ export default function Footer() {
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Box display="flex" justifyContent="center" alignItems="center" mr={1} sx={{ minWidth: 35 }}>
                         <Typography variant="h6" component="p" color="white" sx={{ fontSize: '24px !important' }}>
-                            5
+                            {current + 1}
                         </Typography>
                         <Typography variant="h6" component="p" color="white">
-                            /7
+                            /{all}
                         </Typography>
                     </Box>
                     <Box sx={{ minWidth: 400 }}>
-                        <BorderLinearProgress variant="determinate" value={700 / 11} />
+                        <BorderLinearProgress variant="determinate" value={((current + 1) * 100) / all} />
                     </Box>
                 </Box>
             </CustomTooltip>
@@ -82,7 +83,7 @@ export default function Footer() {
                             px: 2,
                             mr: 1
                         }}
-                        onClick={() => setMusicOn(!musicOn)}
+                        onClick={() => setPage((current + all - 1) % all)}
                     >
                         <ArrowLeftIcon />
                     </IconButton>
@@ -90,7 +91,7 @@ export default function Footer() {
                 <CustomTooltip title="Звук">
                     <IconButton
                         sx={{ bgcolor: (theme) => theme.palette.grey[800], borderRadius: 2, color: 'white', px: 2 }}
-                        onClick={() => setSoundOn(!musicOn)}
+                        onClick={() => setPage((current + 1) % all)}
                     >
                         <ArrowRightIcon />
                     </IconButton>
@@ -99,3 +100,9 @@ export default function Footer() {
         </Box>
     );
 }
+
+Footer.propTypes = {
+    current: PropTypes.number,
+    all: PropTypes.number,
+    setPage: PropTypes.func
+};

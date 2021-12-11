@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Button, Container, Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 
-import { Question, VariantButton } from '../components';
+import { Question } from '../components';
+import { VariantButton } from '../components/Variant';
 
 export default function TrueFalse() {
     return (
