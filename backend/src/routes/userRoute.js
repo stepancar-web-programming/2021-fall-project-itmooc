@@ -41,6 +41,8 @@ router.post('/sign-in', async (req, res) => {
         const { login, password } = req.body;
         if (!(login && password)) return res.status(400).send('Все данные необходимы.');
 
+        console.log(login, password);
+
         const user = await checkUserPassword({ login, password });
         if (user) return res.status(200).json(user);
 
