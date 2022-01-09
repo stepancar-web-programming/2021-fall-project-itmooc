@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 import { Header, Footer, SingleChoice, TrueFalse } from '.';
+import { setPage } from '../reducers/quizReducer';
 
 const MainBox = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.primary.darker,
@@ -37,7 +38,7 @@ export default function Quiz() {
 
     const answers = [1, 2, 0, 1, 4];
 
-    const [page, setPage] = useState(0);
+    const [page, setPage2] = useState(0);
     const [pageWaiting, setPageWaiting] = useState(false);
 
     const setNewPage = (page) => {
@@ -46,7 +47,8 @@ export default function Quiz() {
         //     setPageWaiting(false);
         //     setPage(page);
         // }, 500);
-        if (page < questions.length) setPage(page);
+        setPage({ page });
+        // if (page < questions.length) setPage(page);
     };
 
     return (
@@ -59,6 +61,7 @@ export default function Quiz() {
                             i === page &&
                             !pageWaiting && (
                                 <SingleChoice
+                                    key={i}
                                     question={questions[page]}
                                     variants={variants[page]}
                                     answer={answers[page]}
@@ -69,7 +72,7 @@ export default function Quiz() {
                     )}
                 </AnimatePresence>
             </MainBox>
-            <Footer current={page} all={questions.length} setPage={setPage} />
+            <Footer current={page} all={questions.length} setPage={setNewPage} />
         </Box>
     );
 }

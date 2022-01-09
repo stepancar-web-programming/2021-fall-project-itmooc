@@ -1,38 +1,53 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Formik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Formik } from 'formik';
 import * as yup from 'yup';
 
+import { useTheme } from '@mui/material/styles';
 import {
     Typography,
     Box,
+    Container,
+    OutlinedInput,
+    InputAdornment,
     Button,
-    FormControl,
-    TextField,
-    Grid,
     Alert,
+    Stack,
+    TextField,
+    useMediaQuery,
+    Grid,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    FormControl,
     MenuItem,
     RadioGroup,
-    Radio,
     FormControlLabel,
-    useMediaQuery
+    Radio
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 
 import Logo from '../../core/components/Logo';
-import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
-import { CustomParticles, ImageBox, CustomPaper, MainContainer, DecoratedLink } from '../components';
-import { signUp, resetState } from '../reducers/authReducer';
+import { postCode, postPassword, resetState } from '../reducers/joinReducer';
+import { signUp } from '../../auth/reducers/authReducer';
 
-export default function SignUp() {
+import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
+import { ImageBox, CustomPaper, DecoratedLink } from '../../auth/components';
+
+export default function Join() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [code, setCode] = useState('');
+    const [password, setPassword] = useState('');
+    const [dialog, setDialog] = useState(false);
 
-    const { loading, user, response, error } = useSelector((state) => state?.auth?.auth);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const user = 'ac';
 
     const signUpSchema = yup.object().shape({
         login: yup
@@ -55,20 +70,49 @@ export default function SignUp() {
             .oneOf([yup.ref('password')], 'Пароль подтверждения должен совпадать')
     });
 
+    const { loading, response, error } = useSelector((state) => state?.home?.join);
+
+    const handleTypeCode = (event) => {
+        const text = event.target.value;
+        const regex = new RegExp(/^\d{0,8}$/);
+        if (regex.test(text)) setCode(text);
+    };
+
+    const handleSubmitCode = async () => {
+        if (response) {
+            dispatch(resetState());
+            setTimeout(() => dispatch(postCode({ code })), 650);
+        } else await dispatch(postCode({ code }));
+    };
+
+    const handleSubmitPassword = async () => {
+        if (response) {
+            dispatch(resetState());
+            setTimeout(() => dispatch(postPassword({ code, password })), 650);
+        } else await dispatch(postPassword({ code, password }));
+    };
+
+    const handleClose = () => setDialog(false);
+
+    const inputCss = {
+        fontSize: '16px',
+        ...(code.length > 0 && {
+            input: {
+                letterSpacing: '0.25rem'
+            }
+        })
+    };
+
     const customSpacing = isMobile ? 1 : 2;
+
+    if (!loading && !error && response && !response?.passwordRequired) navigate('/quiz');
 
     return (
         <>
-            <CustomParticles />
-            <MotionContainer initial="initial" open>
-                <MainContainer maxWidth="sm">
-                    <CustomPaper>
-                        <motion.div variants={varBounceIn}>
-                            <ImageBox>
-                                <Logo sx={{ mr: 2 }} />
-                                <Logo type="text-logo" />
-                            </ImageBox>
-                        </motion.div>
+            <Dialog fullScreen={isMobile} open={dialog} onClose={handleClose}>
+                <DialogTitle>"Use Google's location service?"</DialogTitle>
+                <DialogContent>
+                    <MotionContainer>
                         <motion.div variants={varBounceIn}>
                             <Box displa="flex" flexDirection="column">
                                 <AnimatePresence>
@@ -259,9 +303,145 @@ export default function SignUp() {
                                 </Typography>
                             </Box>
                         </motion.div>
+                    </MotionContainer>
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={handleClose}>
+                        Disagree
+                    </Button>
+                    <Button onClick={handleClose} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Grid container>
+                <Grid item xs={8}>
+                    <CustomPaper>
+                        <motion.div animate={varBounceIn.animate}>
+                            <ImageBox>
+                                <Logo sx={{ mr: 2 }} />
+                                <Logo type="text-logo" />
+                            </ImageBox>
+                        </motion.div>
+                        <motion.div animate={varBounceIn.animate}>
+                            <Box displa="flex" flexDirection="column">
+                                <AnimatePresence>
+                                    {!loading && error && response && !response?.passwordRequired && (
+                                        <MotionComponent>
+                                            <Alert severity="error" onClose={() => dispatch(resetState())}>
+                                                {response}
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                    {!loading && error && response?.passwordRequired && (
+                                        <MotionComponent>
+                                            <Alert severity="error" onClose={() => dispatch(resetState())}>
+                                                {response.error}
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                    {!loading && !error && response?.passwordRequired && (
+                                        <MotionComponent>
+                                            <Alert severity="warning" onClose={() => dispatch(resetState())}>
+                                                Эта викторина требует пароля
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                </AnimatePresence>
+                                {isMobile || (!loading && !error && response?.passwordRequired) ? (
+                                    <Stack mt={2}>
+                                        <TextField
+                                            value={code}
+                                            onChange={handleTypeCode}
+                                            label="Код"
+                                            fullWidth
+                                            sx={{ ...inputCss, mb: 2 }}
+                                            autoFocus
+                                            placeholder="Введите код теста"
+                                            disabled={!loading && !error && response?.passwordRequired}
+                                        />
+                                        <AnimatePresence>
+                                            {!loading && !error && response?.passwordRequired && (
+                                                <TextField
+                                                    value={password}
+                                                    onChange={(event) => setPassword(event.target.value)}
+                                                    label="Пароль"
+                                                    name="password"
+                                                    type="password"
+                                                    fullWidth
+                                                    sx={{ mb: customSpacing * 2 }}
+                                                />
+                                            )}
+                                        </AnimatePresence>
+                                        <Button
+                                            variant="contained"
+                                            onClick={
+                                                response?.passwordRequired ? handleSubmitPassword : handleSubmitCode
+                                            }
+                                            disabled={code.length < 8 || loading}
+                                        >
+                                            присоединиться
+                                        </Button>
+                                    </Stack>
+                                ) : (
+                                    <>
+                                        <OutlinedInput
+                                            value={code}
+                                            onChange={handleTypeCode}
+                                            fullWidth
+                                            sx={{ ...inputCss, mt: 2 }}
+                                            disabled={!loading && !error && response}
+                                            autoFocus
+                                            placeholder="Введите код теста"
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <Button
+                                                        variant="contained"
+                                                        onClick={handleSubmitCode}
+                                                        disabled={
+                                                            code.length < 8 ||
+                                                            loading ||
+                                                            (!loading && !error && response)
+                                                        }
+                                                    >
+                                                        присоединиться
+                                                    </Button>
+                                                </InputAdornment>
+                                            }
+                                        />
+                                    </>
+                                )}
+                                <Typography color="secondary" textAlign="center" mt={customSpacing}>
+                                    <DecoratedLink href="/sign-up" color="primary.dark">
+                                        Нет кода? Создать викторину
+                                    </DecoratedLink>
+                                </Typography>
+                            </Box>
+                        </motion.div>
                     </CustomPaper>
-                </MainContainer>
-            </MotionContainer>
+                </Grid>
+                <Grid item xs={4}>
+                    <CustomPaper sx={{ textAlign: 'center', height: '248px' }}>
+                        <Container
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                height: '100%'
+                            }}
+                        >
+                            <Typography variant="h6" component="p" mb={2}>
+                                Vo Minh Thien Long
+                            </Typography>
+                            <Button variant="contained" sx={{ mb: 2 }} onClick={() => setDialog(true)}>
+                                Создать викторину
+                            </Button>
+                            <Button variant="outlined">Настройки</Button>
+                        </Container>
+                    </CustomPaper>
+                </Grid>
+            </Grid>
         </>
     );
 }

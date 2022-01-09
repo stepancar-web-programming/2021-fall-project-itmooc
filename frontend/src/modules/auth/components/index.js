@@ -11,13 +11,14 @@ export const MainContainer = styled(Container)(() => ({
     padding: 0
 }));
 
-export const JoinPaper = styled(Paper)(({ theme }) => ({
+export const CustomPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(4),
     margin: theme.spacing(2),
     [theme.breakpoints.down('md')]: {
         padding: theme.spacing(2),
         margin: theme.spacing(1)
-    }
+    },
+    boxShadow: '0 2px 4px 0 rgba(0,0,0,.1)'
 }));
 
 export const ImageBox = styled(Box)(({ theme }) => ({

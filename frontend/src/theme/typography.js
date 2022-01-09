@@ -19,7 +19,7 @@ function responsiveFontSizes({ xs, sm, md, lg }) {
     };
 }
 
-const FONT_PRIMARY = 'Public Sans, sans-serif';
+const FONT_PRIMARY = 'Comfortaa, sans-serif';
 
 const typography = {
     fontFamily: FONT_PRIMARY,

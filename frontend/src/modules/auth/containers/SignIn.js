@@ -9,7 +9,7 @@ import { Typography, Box, FormControl, TextField, Button, Alert, useMediaQuery }
 
 import { Logo } from '../../core/components';
 import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
-import { CustomParticles, JoinPaper, MainContainer, ImageBox, DecoratedLink } from '../components';
+import { CustomParticles, CustomPaper, MainContainer, ImageBox, DecoratedLink } from '../components';
 import { signIn, resetState } from '../reducers/authReducer';
 
 export default function SignIn() {
@@ -33,7 +33,7 @@ export default function SignIn() {
             <CustomParticles />
             <MotionContainer initial="initial" open>
                 <MainContainer maxWidth="sm">
-                    <JoinPaper>
+                    <CustomPaper>
                         <motion.div variants={varBounceIn}>
                             <ImageBox>
                                 <Logo sx={{ mr: 2 }} />
@@ -116,7 +116,7 @@ export default function SignIn() {
                                 </Typography>
                             </Box>
                         </motion.div>
-                    </JoinPaper>
+                    </CustomPaper>
                 </MainContainer>
             </MotionContainer>
         </>

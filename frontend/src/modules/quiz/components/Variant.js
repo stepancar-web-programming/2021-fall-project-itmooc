@@ -38,22 +38,22 @@ export default function Variant({ contents, answer, onSubmit }) {
 
     return (
         <>
-            {/* <Snackbar */}
-            {/*    open={open} */}
-            {/*    autoHideDuration={2000} */}
-            {/*    onClose={() => setOpen(false)} */}
-            {/*    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} */}
-            {/*    TransitionComponent={(props) => <Slide {...props} direction="up" />} */}
-            {/* > */}
-            {/*    <Alert */}
-            {/*        onClose={() => setOpen(false)} */}
-            {/*        severity={chosen === answer ? 'success' : 'error'} */}
-            {/*        sx={{ minWidth: '1200px', border: '2px solid white' }} */}
-            {/*        variant="filled" */}
-            {/*    > */}
-            {/*        {chosen === answer ? 'ПРАВИЛЬНЫЙ' : 'НЕКОРРЕКТНЫЙ'} */}
-            {/*    </Alert> */}
-            {/* </Snackbar> */}
+            <Snackbar
+                open={open}
+                autoHideDuration={2000}
+                onClose={() => setOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                TransitionComponent={(props) => <Slide {...props} direction="up" />}
+            >
+                <Alert
+                    onClose={() => setOpen(false)}
+                    severity={chosen === answer ? 'success' : 'error'}
+                    sx={{ minWidth: '1200px', border: '2px solid white' }}
+                    variant="filled"
+                >
+                    {chosen === answer ? 'ПРАВИЛЬНЫЙ' : 'НЕКОРРЕКТНЫЙ'}
+                </Alert>
+            </Snackbar>
             <Grid container spacing={1} flex={1}>
                 {contents.map((content, i) => (
                     <Grid item sm={12} md key={i}>
