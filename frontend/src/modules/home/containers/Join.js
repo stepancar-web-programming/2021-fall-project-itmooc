@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -33,7 +33,7 @@ import Logo from '../../core/components/Logo';
 import { postCode, postPassword, resetState } from '../reducers/joinReducer';
 import { signUp } from '../../auth/reducers/authReducer';
 
-import { MotionContainer, MotionComponent, varBounceIn } from '../../core/animate';
+import { MotionComponent, varBounceIn } from '../../core/animate';
 import { ImageBox, CustomPaper, DecoratedLink } from '../../auth/components';
 
 export default function Join() {
@@ -50,15 +50,6 @@ export default function Join() {
     const user = 'ac';
 
     const signUpSchema = yup.object().shape({
-        login: yup
-            .string()
-            .required('Необходимый')
-            .min(8, 'Длина логина должна быть не менее 8')
-            .max(20, 'Длина логина не должна превышать 20')
-            .matches(/^[a-zA-Z0-9._]+$/, 'Логин содержит только символы a-z, A-Z, 0-9 и тире (_) или точку (.)')
-            .matches(/^(?![_.])[a-zA-Z0-9._]*$/, 'Логин не может начинаться с тире (_) или точки (.)')
-            .matches(/^[a-zA-Z0-9._]*(?<![_.])$/, 'Логин не может заканчиваться тире или точкой')
-            .matches(/^(?!.*[_.]{2}).*$/, 'нет __ или _. или ._ или .. внутри логина'),
         password: yup
             .string()
             .required('Необходимый')
@@ -94,6 +85,8 @@ export default function Join() {
 
     const handleClose = () => setDialog(false);
 
+    const handleOpen = () => setDialog(true);
+
     const inputCss = {
         fontSize: '16px',
         ...(code.length > 0 && {
@@ -107,210 +100,163 @@ export default function Join() {
 
     if (!loading && !error && response && !response?.passwordRequired) navigate('/quiz');
 
+    useEffect(() => {});
+
     return (
         <>
             <Dialog fullScreen={isMobile} open={dialog} onClose={handleClose}>
-                <DialogTitle>"Use Google's location service?"</DialogTitle>
+                <DialogTitle>Редактирование личной информации </DialogTitle>
                 <DialogContent>
-                    <MotionContainer>
-                        <motion.div variants={varBounceIn}>
-                            <Box displa="flex" flexDirection="column">
-                                <AnimatePresence>
-                                    {!loading && error && response && (
-                                        <MotionComponent>
-                                            <Alert severity="error" onClose={() => dispatch(resetState())}>
-                                                {response}
-                                            </Alert>
-                                        </MotionComponent>
-                                    )}
-                                    {!loading && !error && user && (
-                                        <MotionComponent>
-                                            <Alert severity="success" onClose={() => dispatch(resetState())}>
-                                                Поздравляю, вы успешно зарегистрировались.
-                                            </Alert>
-                                        </MotionComponent>
-                                    )}
-                                </AnimatePresence>
-                                <Formik
-                                    initialValues={{
-                                        login: '',
-                                        password: '',
-                                        confirmPassword: '',
-                                        day: new Date().getDate(),
-                                        month: new Date().getMonth() + 1,
-                                        year: new Date().getFullYear(),
-                                        gender: 'female'
-                                    }}
-                                    validateOnChange={isSubmitted}
-                                    validateOnBlur={isSubmitted}
-                                    validationSchema={signUpSchema}
-                                    onSubmit={async (values) => {
-                                        const { login, password, day, month, year, gender } = values;
-                                        const birthday = `${year}-${month}-${day}`;
-                                        if (user || response) {
-                                            dispatch(resetState());
-                                            setTimeout(
-                                                () => dispatch(signUp({ login, password, birthday, gender })),
-                                                650
-                                            );
-                                        } else await dispatch(signUp({ login, password, birthday, gender }));
-                                    }}
-                                >
-                                    {({ values, errors, handleChange, handleSubmit, isSubmitting, submitForm }) => (
-                                        <FormControl onSubmit={handleSubmit} fullWidth sx={{ mt: 2 }}>
+                    <Box displa="flex" flexDirection="column">
+                        <AnimatePresence>
+                            {!loading && error && response && (
+                                <MotionComponent>
+                                    <Alert severity="error" onClose={() => dispatch(resetState())}>
+                                        {response}
+                                    </Alert>
+                                </MotionComponent>
+                            )}
+                            {!loading && !error && user && (
+                                <MotionComponent>
+                                    <Alert severity="success" onClose={() => dispatch(resetState())}>
+                                        Поздравляю, вы успешно зарегистрировались.
+                                    </Alert>
+                                </MotionComponent>
+                            )}
+                        </AnimatePresence>
+                        <Formik
+                            initialValues={{
+                                password: '',
+                                confirmPassword: '',
+                                day: new Date().getDate(),
+                                month: new Date().getMonth() + 1,
+                                year: new Date().getFullYear(),
+                                gender: 'female'
+                            }}
+                            validateOnChange={isSubmitted}
+                            validateOnBlur={isSubmitted}
+                            validationSchema={signUpSchema}
+                            onSubmit={async (values) => {
+                                const { password, day, month, year, gender } = values;
+                                const birthday = `${year}-${month}-${day}`;
+                                if (user || response) {
+                                    dispatch(resetState());
+                                    setTimeout(() => dispatch(signUp({ password, birthday, gender })), 650);
+                                } else await dispatch(signUp({ password, birthday, gender }));
+                            }}
+                        >
+                            {({ values, errors, handleChange, handleSubmit, isSubmitting, submitForm }) => (
+                                <FormControl onSubmit={handleSubmit} fullWidth sx={{ mt: 2 }}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} sm>
                                             <TextField
-                                                label="Логин"
-                                                name="login"
+                                                label="Пароль"
+                                                name="password"
+                                                type="password"
                                                 fullWidth
                                                 onChange={handleChange}
-                                                value={values.login}
-                                                error={!!errors.login}
-                                                helperText={errors.login}
+                                                value={values.password}
+                                                error={!!errors.password}
+                                                helperText={errors.password}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm>
+                                            <TextField
+                                                label="Подтверждение пароля"
+                                                name="confirmPassword"
+                                                type="password"
+                                                fullWidth
+                                                onChange={handleChange}
+                                                value={values.confirmPassword}
+                                                error={!!errors.confirmPassword}
+                                                helperText={errors.confirmPassword}
                                                 sx={{ mb: 2 }}
                                             />
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12} sm>
-                                                    <TextField
-                                                        label="Пароль"
-                                                        name="password"
-                                                        type="password"
-                                                        fullWidth
-                                                        onChange={handleChange}
-                                                        value={values.password}
-                                                        error={!!errors.password}
-                                                        helperText={errors.password}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} sm>
-                                                    <TextField
-                                                        label="Подтверждение пароля"
-                                                        name="confirmPassword"
-                                                        type="password"
-                                                        fullWidth
-                                                        onChange={handleChange}
-                                                        value={values.confirmPassword}
-                                                        error={!!errors.confirmPassword}
-                                                        helperText={errors.confirmPassword}
-                                                        sx={{ mb: 2 }}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                            <Typography variant="caption1" mb={2}>
-                                                День рождения
-                                            </Typography>
-                                            <Grid container spacing={1} mb={2}>
-                                                <Grid item xs>
-                                                    <TextField
-                                                        label="День"
-                                                        name="day"
-                                                        select
-                                                        fullWidth
-                                                        value={values.day}
-                                                        onChange={handleChange}
-                                                    >
-                                                        {[...Array(31)].map((_, i) => (
-                                                            <MenuItem value={i + 1} key={i}>
-                                                                {i + 1}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </TextField>
-                                                </Grid>
-                                                <Grid item xs>
-                                                    <TextField
-                                                        label="Месяц"
-                                                        name="month"
-                                                        select
-                                                        fullWidth
-                                                        value={values.month}
-                                                        onChange={handleChange}
-                                                    >
-                                                        <MenuItem value={1}>Январь</MenuItem>
-                                                        <MenuItem value={2}>Февраль</MenuItem>
-                                                        <MenuItem value={3}>Март</MenuItem>
-                                                        <MenuItem value={4}>Апрель</MenuItem>
-                                                        <MenuItem value={5}>Май </MenuItem>
-                                                        <MenuItem value={6}>Июнь</MenuItem>
-                                                        <MenuItem value={7}>Июль</MenuItem>
-                                                        <MenuItem value={8}>Август</MenuItem>
-                                                        <MenuItem value={9}>Сентябрь</MenuItem>
-                                                        <MenuItem value={10}>Октябрь</MenuItem>
-                                                        <MenuItem value={11}>Ноябрь</MenuItem>
-                                                        <MenuItem value={12}>Декабрь</MenuItem>
-                                                    </TextField>
-                                                </Grid>
-                                                <Grid item xs>
-                                                    <TextField
-                                                        label="Год"
-                                                        name="year"
-                                                        select
-                                                        fullWidth
-                                                        value={values.year}
-                                                        onChange={handleChange}
-                                                    >
-                                                        {((currentYear = new Date().getFullYear()) =>
-                                                            [...Array(currentYear - 1900 + 1)].map((_, i) => (
-                                                                <MenuItem value={currentYear - i} key={i}>
-                                                                    {currentYear - i}
-                                                                </MenuItem>
-                                                            )))()}
-                                                    </TextField>
-                                                </Grid>
-                                            </Grid>
-                                            <Typography variant="caption1">Пол</Typography>
-                                            <RadioGroup name="gender" value={values.gender} onChange={handleChange}>
-                                                <Grid container spacing={customSpacing} mb={customSpacing}>
-                                                    <Grid item xs={12} sm>
-                                                        <FormControlLabel
-                                                            label="Женщина"
-                                                            value="female"
-                                                            control={<Radio />}
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={12} sm>
-                                                        <FormControlLabel
-                                                            label="Мужчина"
-                                                            value="male"
-                                                            control={<Radio />}
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={12} sm>
-                                                        <FormControlLabel
-                                                            label="Другое"
-                                                            value="other"
-                                                            control={<Radio />}
-                                                        />
-                                                    </Grid>
-                                                </Grid>
-                                            </RadioGroup>
-                                            <Button
-                                                variant="contained"
-                                                disabled={loading || isSubmitting}
-                                                type="submit"
-                                                onClick={async () => {
-                                                    setIsSubmitted(true);
-                                                    await submitForm();
-                                                }}
+                                        </Grid>
+                                    </Grid>
+                                    <Typography variant="caption1" mb={2}>
+                                        День рождения
+                                    </Typography>
+                                    <Grid container spacing={1} mb={2}>
+                                        <Grid item xs>
+                                            <TextField
+                                                label="День"
+                                                name="day"
+                                                select
+                                                fullWidth
+                                                value={values.day}
+                                                onChange={handleChange}
                                             >
-                                                Регистрация
-                                            </Button>
-                                        </FormControl>
-                                    )}
-                                </Formik>
-                                <Typography color="secondary" textAlign="center" mt={customSpacing}>
-                                    <DecoratedLink href="/sign-in" color="primary.dark">
-                                        Уже есть аккаунт? Войти в систему
-                                    </DecoratedLink>
-                                </Typography>
-                            </Box>
-                        </motion.div>
-                    </MotionContainer>
+                                                {[...Array(31)].map((_, i) => (
+                                                    <MenuItem value={i + 1} key={i}>
+                                                        {i + 1}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                label="Месяц"
+                                                name="month"
+                                                select
+                                                fullWidth
+                                                value={values.month}
+                                                onChange={handleChange}
+                                            >
+                                                <MenuItem value={1}>Январь</MenuItem>
+                                                <MenuItem value={2}>Февраль</MenuItem>
+                                                <MenuItem value={3}>Март</MenuItem>
+                                                <MenuItem value={4}>Апрель</MenuItem>
+                                                <MenuItem value={5}>Май </MenuItem>
+                                                <MenuItem value={6}>Июнь</MenuItem>
+                                                <MenuItem value={7}>Июль</MenuItem>
+                                                <MenuItem value={8}>Август</MenuItem>
+                                                <MenuItem value={9}>Сентябрь</MenuItem>
+                                                <MenuItem value={10}>Октябрь</MenuItem>
+                                                <MenuItem value={11}>Ноябрь</MenuItem>
+                                                <MenuItem value={12}>Декабрь</MenuItem>
+                                            </TextField>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <TextField
+                                                label="Год"
+                                                name="year"
+                                                select
+                                                fullWidth
+                                                value={values.year}
+                                                onChange={handleChange}
+                                            >
+                                                {((currentYear = new Date().getFullYear()) =>
+                                                    [...Array(currentYear - 1900 + 1)].map((_, i) => (
+                                                        <MenuItem value={currentYear - i} key={i}>
+                                                            {currentYear - i}
+                                                        </MenuItem>
+                                                    )))()}
+                                            </TextField>
+                                        </Grid>
+                                    </Grid>
+                                    <Typography variant="caption1">Пол</Typography>
+                                    <RadioGroup name="gender" value={values.gender} onChange={handleChange}>
+                                        <Grid container spacing={customSpacing}>
+                                            <Grid item xs={12} sm>
+                                                <FormControlLabel label="Женщина" value="female" control={<Radio />} />
+                                            </Grid>
+                                            <Grid item xs={12} sm>
+                                                <FormControlLabel label="Мужчина" value="male" control={<Radio />} />
+                                            </Grid>
+                                            <Grid item xs={12} sm>
+                                                <FormControlLabel label="Другое" value="other" control={<Radio />} />
+                                            </Grid>
+                                        </Grid>
+                                    </RadioGroup>
+                                </FormControl>
+                            )}
+                        </Formik>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
-                        Disagree
-                    </Button>
                     <Button onClick={handleClose} autoFocus>
-                        Agree
+                        Обновлять
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -431,13 +377,19 @@ export default function Join() {
                                 height: '100%'
                             }}
                         >
-                            <Typography variant="h6" component="p" mb={2}>
+                            <Typography variant="h5" component="p" mb={2}>
                                 Vo Minh Thien Long
                             </Typography>
-                            <Button variant="contained" sx={{ mb: 2 }} onClick={() => setDialog(true)}>
-                                Создать викторину
-                            </Button>
-                            <Button variant="outlined">Настройки</Button>
+                            <motion.div animate={varBounceIn.animate}>
+                                <Button variant="contained" sx={{ mb: 2 }}>
+                                    Создать викторину
+                                </Button>
+                            </motion.div>
+                            <motion.div animate={varBounceIn.animate}>
+                                <Button variant="outlined" onClick={handleOpen}>
+                                    Настройки
+                                </Button>
+                            </motion.div>
                         </Container>
                     </CustomPaper>
                 </Grid>
