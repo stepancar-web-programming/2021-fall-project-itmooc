@@ -105,25 +105,7 @@ export default function AccountMenu() {
                 <MenuItem>
                     <ManageAccountsIcon sx={{ mr: 1 }} /> Quản lý tài khoản
                 </MenuItem>
-
                 <Divider />
-                <MenuItem onClick={() => setOpenDialog(true)}>
-                    <ListItemIcon>
-                        <FeedbackIcon fontSize="small" />
-                    </ListItemIcon>
-                    Feedback
-                </MenuItem>
-                <MenuItem
-                    onClick={() => {
-                        window.open('https://www.facebook.com/dinhgiang.doan');
-                    }}
-                >
-                    <ListItemIcon>
-                        <RateReviewIcon fontSize="small" />
-                    </ListItemIcon>
-                    Chat với admin
-                </MenuItem>
-                {/* <MenuItem onClick={() => dispatch(logout())}> */}
                 <MenuItem>
                     <ListItemIcon>
                         <LogoutIcon fontSize="small" />

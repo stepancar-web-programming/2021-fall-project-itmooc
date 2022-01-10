@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
             validate: [/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/, 'Incorrect format'],
             required: true
         },
+        name: { type: String },
         password: { type: String, required: true },
         birthday: {
             type: Date,

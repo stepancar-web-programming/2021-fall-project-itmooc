@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as yup from 'yup';
@@ -14,6 +15,7 @@ import { signIn, resetState } from '../reducers/authReducer';
 
 export default function SignIn() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -27,6 +29,12 @@ export default function SignIn() {
     });
 
     const customSpacing = isMobile ? 1 : 2;
+
+    if (!loading && !error && user) {
+        setTimeout(() => {
+            navigate('/');
+        }, 1000);
+    }
 
     return (
         <>

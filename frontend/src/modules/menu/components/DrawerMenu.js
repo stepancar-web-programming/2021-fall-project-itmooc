@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
@@ -15,16 +15,12 @@ import {
     List,
     ListItem,
     ListSubheader,
-    Tooltip,
     ListItemIcon,
     ListItemText,
-    useMediaQuery,
-    CircularProgress
+    useMediaQuery
 } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -96,17 +92,6 @@ export default function DrawerMenu({ Component, pageProps }) {
     const mobileMode = useMediaQuery(theme.breakpoints.down('sm'));
 
     const { open = false } = useSelector((state) => getMenuData(state));
-    // const { user, userError, token } = useSelector((state) => getAuthData(state));
-
-    // useEffect(() => {
-    //     if (!user) dispatch(fetchMe());
-    // }, [user]);
-    //
-    // if (userError) {
-    //     router.push('/login').then();
-    //     localStorage.setItem('token', '');
-    //     dispatch(logout());
-    // } else if (token) localStorage.setItem('token', token);
 
     const handleDrawerOpen = () => {
         dispatch(toggleMenu());
