@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { useTheme } from '@mui/material/styles';
@@ -23,6 +24,7 @@ import { ImageBox, CustomPaper, DecoratedLink } from '../../auth/components';
 export default function Join() {
     const dispatch = useDispatch();
     const theme = useTheme();
+    const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [code, setCode] = useState('');
@@ -60,6 +62,10 @@ export default function Join() {
     };
 
     const customSpacing = isMobile ? 1 : 2;
+
+    useEffect(() => {
+        if (!loading && !error && response && !response?.passwordRequired) navigate('/quiz');
+    });
 
     return (
         <CustomPaper>

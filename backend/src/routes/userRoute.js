@@ -6,9 +6,10 @@ const cors = require('cors');
 const moment = require('moment');
 
 const auth = require('../middlewares/auth');
-const { checkUserPassword, isUserExisted, createUser } = require('../controllers/userController');
+const { checkUserPassword, isUserExisted, createUser, safeUser } = require('../controllers/userController');
 
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 const router = express.Router();
 
 router.use(
@@ -41,13 +42,13 @@ router.post('/sign-up', async (req, res) => {
 });
 
 router.post('/update-info', auth, async (req, res) => {
-    console.log(req.body);
     try {
-        const { password, newPassword, birthday, gender } = req.body;
-        const user = await checkUserPassword({ login: req.user.login, password });
+        const { currentPassword, password, birthday, gender } = req.body;
+
+        const user = await checkUserPassword({ login: req.user.login, password: currentPassword });
         if (!user) return res.status(400).send('Неверный пароль.');
 
-        if (newPassword) user.password = password;
+        if (password) user.password = await bcrypt.hash(password, 10);
 
         if (birthday) {
             if (!moment(birthday, 'YYYY-MM-DD').isValid()) return res.status(400).send('Неверный день рождения.');
@@ -63,7 +64,8 @@ router.post('/update-info', auth, async (req, res) => {
         }
 
         await User.updateOne({ _id: user._id }, user);
-        return res.status(201).json(user);
+
+        return res.status(200).json(safeUser(user));
     } catch (err) {
         console.log(err);
         return res.status(400).send('Плохой запрос.');
@@ -87,8 +89,8 @@ router.post('/sign-in', async (req, res) => {
 
 router.get('/me', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.user_id).select('-password -__v');
-        res.send(user);
+        const user = await User.findById(req.user.user_id);
+        res.status(200).send(safeUser(user));
     } catch (error) {
         console.log(error);
         return res.status(400).send('Плохой запрос.');

@@ -8,8 +8,8 @@ const User = require('../models/user');
 
 const safeUser = (user) => {
     if (!user) return null;
-    const userDto = user.toObject();
-    delete userDto.password;
+    const userDto = typeof user === 'object' ? user : user.toObject();
+    userDto.password = undefined;
     return userDto;
 };
 
@@ -28,7 +28,7 @@ const checkUserPassword = async ({ login, password }) => {
 const createUser = async ({ login, password, birthday, gender }) => {
     let encryptedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
-        login: login.toLowerCase(),
+        login,
         password: encryptedPassword,
         birthday,
         gender
@@ -39,4 +39,4 @@ const createUser = async ({ login, password, birthday, gender }) => {
     return safeUser(user);
 };
 
-module.exports = { isUserExisted, checkUserPassword, createUser };
+module.exports = { isUserExisted, checkUserPassword, createUser, safeUser };

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import { Badge, Avatar, Menu, MenuItem, ListItemIcon, Divider, IconButton, Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import FeedbackIcon from '@mui/icons-material/Feedback';
-import RateReviewIcon from '@mui/icons-material/RateReview';
 import LogoutIcon from '@mui/icons-material/Logout';
+
+import UserSetting from '../../auth/components/UserSetting';
+import { resetState } from '../../auth/reducers/authReducer';
 
 export const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -40,6 +43,7 @@ export const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export default function AccountMenu() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
@@ -55,7 +59,8 @@ export default function AccountMenu() {
 
     return (
         <>
-            <Tooltip title="Tài khoản">
+            <UserSetting handleClose={() => setOpenDialog(false)} isOpen={openDialog} />
+            <Tooltip title="Пользовательские настройки">
                 <IconButton onClick={handleClick} size="small" sx={{ ml: 2 }}>
                     <StyledBadge
                         overlap="circular"
@@ -102,15 +107,21 @@ export default function AccountMenu() {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem>
-                    <ManageAccountsIcon sx={{ mr: 1 }} /> Quản lý tài khoản
+                <MenuItem onClick={() => setOpenDialog(true)}>
+                    <ManageAccountsIcon sx={{ mr: 1 }} /> Управление пользователем
                 </MenuItem>
                 <Divider />
-                <MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        dispatch(resetState());
+                        localStorage.setItem('token', '');
+                        navigate('/');
+                    }}
+                >
                     <ListItemIcon>
                         <LogoutIcon fontSize="small" />
                     </ListItemIcon>
-                    Đăng xuất
+                    Выйти
                 </MenuItem>
             </Menu>
         </>

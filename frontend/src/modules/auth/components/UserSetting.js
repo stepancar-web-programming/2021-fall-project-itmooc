@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import PropTypes from 'prop-types';
 
 import { useTheme } from '@mui/material/styles';
 import {
@@ -26,31 +25,20 @@ import {
     Radio
 } from '@mui/material';
 
-import { updateInfo, me, resetState as resetStateUser } from '../reducers/authReducer';
+import { updateInfo } from '../reducers/authReducer';
 import { MotionComponent } from '../../core/animate';
 
 export default function UserSetting({ isOpen, handleClose }) {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const {
-        loading: loadingJoin,
-        response: responseJoin,
-        error: errorJoin
-    } = useSelector((state) => state?.home?.join);
-
-    const {
-        user,
-        loading: loadingUser,
-        response: responseUser,
-        error: errorUser
-    } = useSelector((state) => state?.auth?.auth);
+    const { user, loading, response } = useSelector((state) => state?.auth?.auth);
 
     const updateInfoSchema = yup.object().shape({
+        currentPassword: yup.string().required('Необходимый'),
         password: yup
             .string()
             .required('Необходимый')
@@ -64,62 +52,65 @@ export default function UserSetting({ isOpen, handleClose }) {
 
     const customSpacing = isMobile ? 1 : 2;
 
-    useEffect(() => {
-        if (!loadingJoin && !errorJoin && responseJoin && !responseJoin?.passwordRequired) navigate('/quiz');
-        else if (errorUser) navigate('/sign-in');
-        else if (!user) dispatch(me({}));
-    });
-
     return (
         <>
-            <Dialog fullScreen={isMobile} open={isOpen} onClose={handleClose}>
-                <DialogTitle>Редактирование личной информации </DialogTitle>
-                <DialogContent>
-                    <Box displa="flex" flexDirection="column">
-                        <AnimatePresence>
-                            {!loadingUser && errorUser && responseUser && (
-                                <MotionComponent>
-                                    <Alert severity="error" onClose={() => dispatch(resetStateUser())}>
-                                        {responseUser}
-                                    </Alert>
-                                </MotionComponent>
-                            )}
-                            {!loadingUser && !errorUser && user && (
-                                <MotionComponent>
-                                    <Alert severity="success" onClose={() => dispatch(resetStateUser())}>
-                                        Поздравляю, вы успешно обновили вашу информацию .
-                                    </Alert>
-                                </MotionComponent>
-                            )}
-                        </AnimatePresence>
-                        <Formik
-                            initialValues={{
-                                password: '',
-                                confirmPassword: '',
-                                day: new Date().getDate(),
-                                month: new Date().getMonth() + 1,
-                                year: new Date().getFullYear(),
-                                gender: 'female'
-                            }}
-                            validateOnChange={isSubmitted}
-                            validateOnBlur={isSubmitted}
-                            validationSchema={updateInfoSchema}
-                            onSubmit={async (values) => {
-                                const { password, day, month, year, gender } = values;
-                                const birthday = `${year}-${month}-${day}`;
-                                setIsSubmitted(true);
-                                if (user || responseUser) {
-                                    dispatch(resetStateUser());
-                                    setTimeout(() => dispatch(updateInfo({ password, birthday, gender })), 650);
-                                } else await dispatch(updateInfo({ password, birthday, gender }));
-                            }}
-                        >
-                            {({ values, errors, handleChange, handleSubmit }) => (
+            <Formik
+                initialValues={{
+                    currentPassword: '',
+                    password: '',
+                    confirmPassword: '',
+                    day: user ? new Date(user?.birthday).getDate() : 1,
+                    month: user ? new Date(user?.birthday).getMonth() + 1 : 1,
+                    year: user ? new Date(user?.birthday).getFullYear() : 2000,
+                    gender: user?.gender
+                }}
+                validateOnChange={isSubmitted}
+                validateOnBlur={isSubmitted}
+                validationSchema={updateInfoSchema}
+                onSubmit={async (values) => {
+                    const { currentPassword, password, day, month, year, gender } = values;
+                    const birthday = `${year}-${month}-${day}`;
+                    setIsSubmitted(true);
+                    await dispatch(updateInfo({ currentPassword, password, birthday, gender }));
+                }}
+            >
+                {({ values, errors, handleChange, handleSubmit }) => (
+                    <Dialog fullScreen={isMobile} open={isOpen} onClose={handleClose}>
+                        <DialogTitle>Редактирование личной информации </DialogTitle>
+                        <DialogContent>
+                            <Box displa="flex" flexDirection="column">
+                                <AnimatePresence>
+                                    {!loading && response !== 'success' && isSubmitted && (
+                                        <MotionComponent>
+                                            <Alert severity="error" onClose={handleClose}>
+                                                {response}
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                    {!loading && response === 'success' && isSubmitted && (
+                                        <MotionComponent>
+                                            <Alert severity="success" onClose={handleClose}>
+                                                Поздравляю, вы успешно обновили вашу информацию .
+                                            </Alert>
+                                        </MotionComponent>
+                                    )}
+                                </AnimatePresence>
                                 <FormControl onSubmit={handleSubmit} fullWidth sx={{ mt: 2 }}>
+                                    <TextField
+                                        label="Текущий пароль"
+                                        name="currentPassword"
+                                        type="password"
+                                        fullWidth
+                                        onChange={handleChange}
+                                        value={values.currentPassword}
+                                        error={!!errors.currentPassword}
+                                        helperText={errors.currentPassword}
+                                        sx={{ mb: 2 }}
+                                    />
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} sm>
                                             <TextField
-                                                label="Пароль"
+                                                label="Новый пароль"
                                                 name="password"
                                                 type="password"
                                                 fullWidth
@@ -158,7 +149,7 @@ export default function UserSetting({ isOpen, handleClose }) {
                                             >
                                                 {[...Array(31)].map((_, i) => (
                                                     <MenuItem value={i + 1} key={i}>
-                                                        {i + 1}
+                                                        {(i + 1).toString()}
                                                     </MenuItem>
                                                 ))}
                                             </TextField>
@@ -198,7 +189,7 @@ export default function UserSetting({ isOpen, handleClose }) {
                                                 {((currentYear = new Date().getFullYear()) =>
                                                     [...Array(currentYear - 1900 + 1)].map((_, i) => (
                                                         <MenuItem value={currentYear - i} key={i}>
-                                                            {currentYear - i}
+                                                            {(currentYear - i).toString()}
                                                         </MenuItem>
                                                     )))()}
                                             </TextField>
@@ -219,16 +210,17 @@ export default function UserSetting({ isOpen, handleClose }) {
                                         </Grid>
                                     </RadioGroup>
                                 </FormControl>
-                            )}
-                        </Formik>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} autoFocus>
-                        Обновлять
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                            </Box>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleSubmit}>Обновлять</Button>
+                            <Button onClick={handleClose} autoFocus sx={{ color: (theme) => theme.palette.grey[600] }}>
+                                Отмена
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                )}
+            </Formik>
         </>
     );
 }

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import MuiAppBar from '@mui/material/AppBar';
 import {
@@ -32,6 +33,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AccountMenu from './AccountMenu';
 import { getMenuData, toggleMenu } from '../reducers/menuReducer';
 import Logo from '../../core/components/Logo';
+import { me } from '../../auth/reducers/authReducer';
 
 const drawerWidth = 240;
 
@@ -89,17 +91,23 @@ const WebName = styled(Typography)(() => ({
 export default function DrawerMenu({ Component, pageProps }) {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const mobileMode = useMediaQuery(theme.breakpoints.down('sm'));
 
     const { open = false } = useSelector((state) => getMenuData(state));
+    const { user, loading, error } = useSelector((state) => state?.auth?.auth);
 
     const handleDrawerOpen = () => {
         dispatch(toggleMenu());
     };
-
     const handleDrawerClose = () => {
         dispatch(toggleMenu());
     };
+
+    useEffect(() => {
+        if (error) navigate('/sign-in');
+        else if (!user && !loading) dispatch(me({}));
+    });
 
     return (
         <>
@@ -119,21 +127,12 @@ export default function DrawerMenu({ Component, pageProps }) {
                         <WebName variant="h6" noWrap component="div" ml={2}>
                             ITMOOC
                         </WebName>
-                        {/* <Tooltip title={`Chuyển sang ${darkModeActive ? 'light' : 'dark'} mode`}> */}
-                        {/*    <IconButton */}
-                        {/*        color="inherit" */}
-                        {/*        aria-label="switch dark mode" */}
-                        {/*        onClick={darkModeActive ? switchToLightMode : switchToDarkMode} */}
-                        {/*    > */}
-                        {/*        {darkModeActive ? <Brightness4Icon /> : <Brightness7Icon />} */}
-                        {/*    </IconButton> */}
-                        {/* </Tooltip> */}
                         <AccountMenu />
                     </Toolbar>
                 </AppBar>
                 <Drawer
                     ModalProps={{
-                        keepMounted: true // Better open performance on mobile.
+                        keepMounted: true
                     }}
                     sx={{
                         width: drawerWidth,

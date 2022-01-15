@@ -11,13 +11,27 @@ export const signUp = asyncAction('AUTH/SIGN_UP', ({ login, password, birthday, 
     axios.post(SIGN_UP_URL, { login, password, birthday, gender })
 );
 
-export const updateInfo = asyncAction('AUTH/UPDATE_INFO', ({ password, newPassword, birthday, gender }) =>
-    axios.post(UPDATE_INFO_URL, { password, newPassword, birthday, gender })
+export const resetState = createAction('AUTH/RESET_STATE');
+
+export const updateInfo = asyncAction('AUTH/UPDATE_INFO', ({ currentPassword, password, birthday, gender }) =>
+    axios.post(
+        UPDATE_INFO_URL,
+        { currentPassword, password, birthday, gender },
+        {
+            headers: {
+                'x-access-token': localStorage.getItem('token')
+            }
+        }
+    )
 );
 
-export const me = asyncAction('AUTH/ME', () => axios.get(ME_URL));
-
-export const resetState = createAction('AUTH/RESET_STATE');
+export const me = asyncAction('AUTH/ME', () =>
+    axios.get(ME_URL, {
+        headers: {
+            'x-access-token': localStorage.getItem('token')
+        }
+    })
+);
 
 const initialState = {
     loading: false,
@@ -34,12 +48,15 @@ export default handleActions(
             response: null,
             error: false
         }),
-        [signIn.SUCCESS]: (state, { payload }) => ({
-            loading: false,
-            user: payload?.data,
-            response: null,
-            error: false
-        }),
+        [signIn.SUCCESS]: (state, { payload }) => {
+            localStorage.setItem('token', payload?.data?.token);
+            return {
+                loading: false,
+                user: payload?.data,
+                response: null,
+                error: false
+            };
+        },
         [signIn.FAILURE]: (state, { payload }) => ({
             loading: false,
             user: null,
@@ -53,12 +70,15 @@ export default handleActions(
             response: null,
             error: false
         }),
-        [signUp.SUCCESS]: (state, { payload }) => ({
-            loading: false,
-            user: payload?.data,
-            response: null,
-            error: false
-        }),
+        [signUp.SUCCESS]: (state, { payload }) => {
+            localStorage.setItem('token', payload?.data?.token);
+            return {
+                loading: false,
+                user: payload?.data,
+                response: null,
+                error: false
+            };
+        },
         [signUp.FAILURE]: (state, { payload }) => ({
             loading: false,
             user: null,
@@ -69,20 +89,19 @@ export default handleActions(
         [updateInfo.START]: () => ({
             loading: true,
             user: null,
-            response: null,
             error: false
         }),
         [updateInfo.SUCCESS]: (state, { payload }) => ({
             loading: false,
             user: payload?.data,
-            response: null,
+            response: 'success',
             error: false
         }),
         [updateInfo.FAILURE]: (state, { payload }) => ({
             loading: false,
-            user: null,
+            user: payload?.data,
             response: payload?.error,
-            error: true
+            error: false
         }),
 
         [me.START]: () => ({
