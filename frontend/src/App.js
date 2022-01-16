@@ -5,7 +5,7 @@ import ScrollToTop from './modules/core/components/ScrollToTop';
 
 export default function App() {
     return (
-        <ThemeConfig>
+        <ThemeConfig> 
             <ScrollToTop />
             <GlobalStyles />
             <Router />
