@@ -22,3 +22,7 @@ fi
 docker run -d --rm=true -p $SERVICE_PORT:$SERVICE_PORT --name $CONAINER_NAME $DOCKER_IMAGE
 
 docker ps -a
+
+if [ $(docker inspect -f '{{.State.Running}}' $CONAINER_NAME) = "false" ]; then
+    exit 1
+fi
