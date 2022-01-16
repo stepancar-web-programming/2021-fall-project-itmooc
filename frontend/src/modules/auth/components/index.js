@@ -2,6 +2,8 @@ import { styled } from '@mui/material/styles';
 import { Box, Container, Link, Paper } from '@mui/material';
 
 export { default as CustomParticles } from './CustomParticles';
+export { default as UserSetting } from './UserSetting';
+export { default as CreateQuiz } from './CreateQuiz';
 
 export const MainContainer = styled(Container)(() => ({
     minHeight: '100vh',

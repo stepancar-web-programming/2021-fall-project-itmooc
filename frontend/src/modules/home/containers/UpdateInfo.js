@@ -5,20 +5,18 @@ import { Typography, Container, Button } from '@mui/material';
 
 import { useSelector } from 'react-redux';
 import { varBounceIn } from '../../core/animate';
-import { CustomPaper } from '../../auth/components';
-import UserSetting from '../../auth/components/UserSetting';
+import { CustomPaper, UserSetting, CreateQuiz } from '../../auth/components';
 
 export default function UpdateInfo() {
-    const [dialog, setDialog] = useState(false);
+    const [dialogSetting, setDialogSetting] = useState(false);
+    const [dialogCreate, setDialogCreate] = useState(false);
 
     const { user } = useSelector((state) => state?.auth?.auth);
 
-    const handleClose = () => setDialog(false);
-    const handleOpen = () => setDialog(true);
-
     return (
         <>
-            <UserSetting isOpen={dialog} handleClose={handleClose} />
+            {user && <UserSetting isOpen={dialogSetting} handleClose={() => setDialogSetting(false)} />}
+            <CreateQuiz isOpen={dialogCreate} handleClose={() => setDialogCreate(false)} />
             <CustomPaper sx={{ textAlign: 'center', height: '248px' }}>
                 <Container
                     sx={{
@@ -33,12 +31,12 @@ export default function UpdateInfo() {
                         {user?.login}
                     </Typography>
                     <motion.div animate={varBounceIn.animate}>
-                        <Button variant="contained" sx={{ mb: 2 }}>
+                        <Button variant="contained" sx={{ mb: 2 }} onClick={() => setDialogCreate(true)}>
                             Создать викторину
                         </Button>
                     </motion.div>
                     <motion.div animate={varBounceIn.animate}>
-                        <Button variant="outlined" onClick={handleOpen}>
+                        <Button variant="outlined" onClick={() => setDialogSetting(true)}>
                             Настройки
                         </Button>
                     </motion.div>

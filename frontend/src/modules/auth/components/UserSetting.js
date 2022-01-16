@@ -59,9 +59,9 @@ export default function UserSetting({ isOpen, handleClose }) {
                     currentPassword: '',
                     password: '',
                     confirmPassword: '',
-                    day: user ? new Date(user?.birthday).getDate() : 1,
-                    month: user ? new Date(user?.birthday).getMonth() + 1 : 1,
-                    year: user ? new Date(user?.birthday).getFullYear() : 2000,
+                    day: new Date(user?.birthday).getDate(),
+                    month: new Date(user?.birthday).getMonth() + 1,
+                    year: new Date(user?.birthday).getFullYear(),
                     gender: user?.gender
                 }}
                 validateOnChange={isSubmitted}
