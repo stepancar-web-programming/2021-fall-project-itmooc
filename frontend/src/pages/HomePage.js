@@ -11,7 +11,7 @@ export default function QuizPage() {
     });
 
     return (
-        <Page title="Для студентов - ITMOOC">
+        <Page title="Для студентов - LMAO">
             <DrawerMenu Component={Home} />
         </Page>
     );
