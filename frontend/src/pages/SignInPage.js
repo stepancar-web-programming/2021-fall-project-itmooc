@@ -12,7 +12,7 @@ export default function SignInPage() {
     });
 
     return (
-        <Page title="Для студентов - ITMOOC">
+        <Page title="Для студентов - LOL">
             <SignIn />
         </Page>
     );
