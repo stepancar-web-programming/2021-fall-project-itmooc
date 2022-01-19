@@ -19,7 +19,7 @@ if [ $(docker inspect -f '{{.State.Running}}' $CONAINER_NAME) = "true" ]; then
     docker stop $CONAINER_NAME
 fi
 
-docker run -d --rm=true -p $SERVICE_PORT:$SERVICE_PORT --name $CONAINER_NAME $DOCKER_IMAGE
+docker run --network host -d --rm=true -p $SERVICE_PORT:$SERVICE_PORT --name $CONAINER_NAME $DOCKER_IMAGE
 
 docker ps -a
 
