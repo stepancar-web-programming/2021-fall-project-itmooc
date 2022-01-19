@@ -28,10 +28,14 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           
           script: |
-            rm -r itmooc
-            git clone git@github.com:stepancar-web-programming/itmooc.git
-            echo "Deploy frontend"
-            cd itmooc/frontend
+            test -d "itmooc" || git clone git@github.com:stepancar-web-programming/itmooc.git
+            cd itmooc
+            git fetch --all
             git checkout test_deploy
+            git rebase origin/test_deplot
+            echo "Deploy frontend"
+            cd frontend
+            mv src/modules/auth/constants_prod.js src/modules/auth/constants.js 
+            mv src/modules/home/constants_prod.js src/modules/home/constants.js
             chmod a+x deploy.sh
             ./deploy.sh
