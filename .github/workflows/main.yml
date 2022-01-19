@@ -30,9 +30,10 @@ jobs:
           script: |
             test -d "itmooc" || git clone git@github.com:stepancar-web-programming/itmooc.git
             cd itmooc
+            git stash
             git fetch --all
             git checkout test_deploy
-            git rebase origin/test_deplot
+            git rebase origin/test_deploy
             echo "Deploy frontend"
             cd frontend
             mv src/modules/auth/constants_prod.js src/modules/auth/constants.js 
