@@ -40,3 +40,8 @@ jobs:
             mv src/modules/home/constants_prod.js src/modules/home/constants.js
             chmod a+x deploy.sh
             ./deploy.sh
+            echo "Deploy backend"
+            cd ../backend
+            mv .env_prod .env
+            chmod a+x deploy.sh
+            ./deploy.sh
