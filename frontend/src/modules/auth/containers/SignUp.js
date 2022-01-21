@@ -125,6 +125,7 @@ export default function SignUp() {
                                             <TextField
                                                 label="Логин"
                                                 name="login"
+                                                inputProps={{ autocomplete: 'username' }}
                                                 fullWidth
                                                 onChange={handleChange}
                                                 value={values.login}
@@ -138,6 +139,7 @@ export default function SignUp() {
                                                         label="Пароль"
                                                         name="password"
                                                         type="password"
+                                                        inputProps={{ autocomplete: 'new-password' }}
                                                         fullWidth
                                                         onChange={handleChange}
                                                         value={values.password}
@@ -150,6 +152,7 @@ export default function SignUp() {
                                                         label="Подтверждение пароля"
                                                         name="confirmPassword"
                                                         type="password"
+                                                        inputProps={{ autocomplete: 'new-password' }}
                                                         fullWidth
                                                         onChange={handleChange}
                                                         value={values.confirmPassword}
